@@ -15,3 +15,6 @@ dist/
 
 # VSCode
 .vscode/
+
+# Media (รูปภาพที่ Upload)
+backend/media/
