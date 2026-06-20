@@ -123,7 +123,7 @@ export default function MovieDetailPage() {
       {/* ---- หนัง ---- */}
       <div className="bg-gray-900 rounded-xl overflow-hidden mb-8">
         {movie.image && (
-          <img src={`http://127.0.0.1:8000${movie.image}`}
+          <img src={movie.image}
             alt={movie.title}
             className="w-full h-72 object-cover" />
         )}

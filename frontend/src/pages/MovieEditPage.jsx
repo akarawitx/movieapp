@@ -26,7 +26,7 @@ export default function MovieEditPage() {
         title: m.title, description: m.description,
         genre: m.genre, release_year: m.release_year, director: m.director
       })
-      if (m.image) setPreview(`http://127.0.0.1:8000${m.image}`)
+      if (m.image) setPreview(m.image)
     })
   }, [id])
 

@@ -34,7 +34,7 @@ export default function MovieListPage() {
             <Link to={`/movies/${movie.id}`} key={movie.id}
               className="bg-gray-900 rounded-xl overflow-hidden hover:ring-2 hover:ring-yellow-400 transition">
               {movie.image ? (
-                <img src={`http://127.0.0.1:8000${movie.image}`}
+                <img src={movie.image}
                   alt={movie.title}
                   className="w-full h-48 object-cover" />
               ) : (
