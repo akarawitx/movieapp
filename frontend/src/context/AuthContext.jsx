@@ -1,20 +1,17 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState } from 'react'
 import api from '../api/axios'
 
 const AuthContext = createContext()
 
 export function AuthProvider({ children }) {
-  const [user, setUser]     = useState(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const token = localStorage.getItem('access_token')
-    const savedUser = localStorage.getItem('user')
-    if (token && savedUser) {
-      setUser(JSON.parse(savedUser))
-    }
-    setLoading(false)
-  }, [])
+  const [user, setUser] = useState(() => {
+    try {
+      const token     = localStorage.getItem('access_token')
+      const savedUser = localStorage.getItem('user')
+      if (token && savedUser) return JSON.parse(savedUser)
+    } catch { return null }
+    return null
+  })
 
   const login = async (username, password) => {
     const res = await api.post('/auth/login/', { username, password })
@@ -37,12 +34,11 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )
 }
 
-export function useAuth() {
-  return useContext(AuthContext)
-}
+// eslint-disable-next-line react-refresh/only-export-components
+export const useAuth = () => useContext(AuthContext)

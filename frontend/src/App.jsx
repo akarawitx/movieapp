@@ -1,31 +1,34 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import { useAuth } from './context/AuthContext'
-import Navbar from './components/Navbar'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import MovieListPage from './pages/MovieListPage'
-import MovieCreatePage from './pages/MovieCreatePage'
-import MovieEditPage from './pages/MovieEditPage'
-import MovieDetailPage from './pages/MovieDetailPage'
-
-function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth()
-  if (loading) return <div className="text-white text-center mt-20">Loading...</div>
-  return user ? children : <Navigate to="/login" />
-}
+import { useState } from 'react'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Toast from './components/Toast'
+import HomePage from './pages/HomePage'
 
 export default function App() {
+  const [user, setUser]           = useState(null)
+  const [searchQuery, setSearch]  = useState('')
+  const [toast, setToast]         = useState({ show: false, icon: '', msg: '' })
+
+  const showToast = (msg, icon = '✅') => {
+    setToast({ show: true, icon, msg })
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950">
-      <Navbar />
-      <Routes>
-        <Route path="/"                element={<MovieListPage />} />
-        <Route path="/login"           element={<LoginPage />} />
-        <Route path="/register"        element={<RegisterPage />} />
-        <Route path="/movies/:id"      element={<MovieDetailPage />} />
-        <Route path="/movies/create"   element={<ProtectedRoute><MovieCreatePage /></ProtectedRoute>} />
-        <Route path="/movies/:id/edit" element={<ProtectedRoute><MovieEditPage /></ProtectedRoute>} />
-      </Routes>
+    <div style={{ minHeight: '100vh', background: '#0A0A0A' }}>
+      <Header
+        user={user}
+        onLogin={setUser}
+        onSearch={setSearch}
+      />
+      <main>
+        <HomePage
+          user={user}
+          onToast={showToast}
+          searchQuery={searchQuery}
+        />
+      </main>
+      <Footer />
+      <Toast toast={toast} onHide={() => setToast({ ...toast, show: false })} />
     </div>
   )
 }
