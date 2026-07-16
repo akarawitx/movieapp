@@ -36,11 +36,11 @@ export default function MovieCard({ movie, onOpen, onWatchlist }) {
       {/* Poster */}
       <div
         style={{
-          aspectRatio: "2/3",
+          width: "100%",
+          height: "260px",
           position: "relative",
           overflow: "hidden",
-          minHeight: "200px", // ← ป้องกันการ์ดยุบก่อนรูปโหลด
-          background: "#1a1a1a", // ← สีพื้นหลังระหว่างโหลด
+          background: "#1a1a1a",
         }}
       >
         <img
