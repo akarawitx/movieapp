@@ -1,0 +1,88 @@
+.footer {
+  background: var(--darker);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 48px 5% 32px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.logoRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.logoText {
+  font-family: "Goldman", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.desc {
+  color: #666;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.colTitle {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  margin-bottom: 10px;
+}
+
+.link {
+  color: #666;
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.15s;
+}
+
+.link:hover {
+  color: var(--gold);
+}
+
+.bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.copy {
+  color: #444;
+  font-size: 12px;
+}
+
+/* ของแถม: มือถือ */
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .brand {
+    grid-column: 1 / -1;
+  }
+}

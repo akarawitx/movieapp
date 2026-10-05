@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MOVIES } from "../data/movies";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
+import styles from "../css/pages/MovieBrowsePage.module.css";
 
 const GENRES = [
   { id: "all", label: "ทั้งหมด" },
@@ -14,48 +15,70 @@ const GENRES = [
   { id: "romance", label: "โรแมนติก" },
 ];
 
-const YEARS = ["ทั้งหมด", "2024", "2023", "2022", "2021", "2020"];
-
-const SCORES = [
-  { id: "all", label: "ทั้งหมด" },
-  { id: "9", label: "9.0+" },
-  { id: "8", label: "8.0+" },
-  { id: "7", label: "7.0+" },
-  { id: "6", label: "6.0+" },
-];
-
 const SORTS = [
   { id: "score", label: "คะแนนสูงสุด" },
   { id: "newest", label: "ใหม่ล่าสุด" },
   { id: "reviews", label: "รีวิวเยอะสุด" },
+  { id: "upcoming", label: "เร็วๆ นี้" },
 ];
+
+function DualSlider({ min, max, step, value, onChange }) {
+  const getPercent = (val) => ((val - min) / (max - min)) * 100;
+
+  const handleMin = (e) => {
+    const newMin = Math.min(Number(e.target.value), value[1] - step);
+    onChange([newMin, value[1]]);
+  };
+
+  const handleMax = (e) => {
+    const newMax = Math.max(Number(e.target.value), value[0] + step);
+    onChange([value[0], newMax]);
+  };
+
+  const minPercent = getPercent(value[0]);
+  const maxPercent = getPercent(value[1]);
+
+  return (
+    <div className={styles.sliderWrap}>
+      {/* Track */}
+      <div className={styles.track} />
+
+      {/* Active Track — left/width ขึ้นกับค่าที่เลื่อน จึงเก็บเป็น inline style */}
+      <div
+        className={styles.trackActive}
+        style={{
+          left: `${minPercent}%`,
+          width: `${maxPercent - minPercent}%`,
+        }}
+      />
+
+      <div className={styles.slider}>
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value[0]}
+          onChange={handleMin}
+        />
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={step}
+          value={value[1]}
+          onChange={handleMax}
+        />
+      </div>
+    </div>
+  );
+}
 
 function SidebarSection({ title, children }) {
   return (
-    <div style={{ marginBottom: "28px" }}>
-      <div
-        style={{
-          fontFamily: "'Prompt', sans-serif",
-          fontSize: "13px",
-          fontWeight: 700,
-          color: "#fff",
-          marginBottom: "12px",
-          letterSpacing: "0.5px",
-          textTransform: "uppercase",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-        }}
-      >
-        <span
-          style={{
-            width: "3px",
-            height: "14px",
-            background: "#F5C518",
-            borderRadius: "2px",
-            display: "block",
-          }}
-        />
+    <div className={styles.sideSection}>
+      <div className={styles.sideTitle}>
+        <span className={styles.sideBar} />
         {title}
       </div>
       {children}
@@ -67,34 +90,7 @@ function FilterBtn({ active, onClick, children }) {
   return (
     <button
       onClick={onClick}
-      style={{
-        display: "block",
-        width: "100%",
-        textAlign: "left",
-        background: active ? "rgba(245,197,24,0.12)" : "none",
-        border: `1px solid ${active ? "rgba(245,197,24,0.35)" : "transparent"}`,
-        color: active ? "#F5C518" : "#888",
-        padding: "7px 12px",
-        borderRadius: "7px",
-        cursor: "pointer",
-        fontFamily: "'Prompt', sans-serif",
-        fontSize: "13px",
-        marginBottom: "2px",
-        transition: "all 0.15s",
-        fontWeight: active ? 600 : 400,
-      }}
-      onMouseEnter={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = "#ccc";
-          e.currentTarget.style.background = "rgba(255,255,255,0.04)";
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (!active) {
-          e.currentTarget.style.color = "#888";
-          e.currentTarget.style.background = "none";
-        }
-      }}
+      className={`${styles.filterBtn} ${active ? styles.filterBtnActive : ""}`}
     >
       {children}
     </button>
@@ -103,27 +99,64 @@ function FilterBtn({ active, onClick, children }) {
 
 export default function MovieBrowsePage({ user, onToast }) {
   const navigate = useNavigate();
-  const [genre, setGenre] = useState("all");
-  const [year, setYear] = useState("ทั้งหมด");
-  const [score, setScore] = useState("all");
-  const [sort, setSort] = useState("score");
+  const [searchParams] = useSearchParams();
+  const yearDropdownRef = useRef(null);
+
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (
+        yearDropdownRef.current &&
+        !yearDropdownRef.current.contains(e.target)
+      ) {
+        setYearOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  const initGenre = searchParams.get("genre");
+  const [genre, setGenre] = useState(
+    GENRES.some((g) => g.id === initGenre) ? initGenre : "all",
+  );
+  const [year, setYear] = useState("all");
+  const [customYear, setCustomYear] = useState("");
+  const [showCustom, setShowCustom] = useState(false);
+  const [yearOpen, setYearOpen] = useState(false);
+  const [search, setSearch] = useState("");
+  const [scoreRange, setScoreRange] = useState([0, 10]);
+  const initSort = searchParams.get("sort");
+  const [sort, setSort] = useState(
+    SORTS.some((s) => s.id === initSort) ? initSort : "score",
+  );
   const [selected, setSelected] = useState(null);
 
   const filtered = useMemo(() => {
     let result = [...MOVIES];
 
+    if (search.trim())
+      result = result.filter(
+        (m) =>
+          m.title.toLowerCase().includes(search.toLowerCase()) ||
+          m.director.toLowerCase().includes(search.toLowerCase()) ||
+          m.genreLabel.includes(search),
+      );
     if (genre !== "all") result = result.filter((m) => m.genre === genre);
-    if (year !== "ทั้งหมด")
-      result = result.filter((m) => String(m.year) === year);
-    if (score !== "all")
-      result = result.filter((m) => m.score >= parseFloat(score));
+    const activeYear = showCustom ? customYear : year;
+    if (activeYear !== "all" && activeYear !== "") {
+      result = result.filter((m) => String(m.year) === String(activeYear));
+    }
+    result = result.filter(
+      (m) => m.score >= scoreRange[0] && m.score <= scoreRange[1],
+    );
 
     if (sort === "score") result.sort((a, b) => b.score - a.score);
     if (sort === "newest") result.sort((a, b) => b.year - a.year);
     if (sort === "reviews") result.sort((a, b) => b.reviews - a.reviews);
+    if (sort === "upcoming") result.reverse();
 
     return result;
-  }, [genre, year, score, sort]);
+  }, [genre, year, customYear, showCustom, scoreRange, sort, search]);
 
   const handleWatchlist = (movie) => {
     if (!user) {
@@ -135,132 +168,203 @@ export default function MovieBrowsePage({ user, onToast }) {
 
   const resetAll = () => {
     setGenre("all");
-    setYear("ทั้งหมด");
-    setScore("all");
+    setYear("all");
+    setCustomYear("");
+    setShowCustom(false);
+    setScoreRange([0, 10]);
     setSort("score");
   };
-  const hasFilter = genre !== "all" || year !== "ทั้งหมด" || score !== "all";
-
+  const activeYear = showCustom ? customYear : year;
+  const hasFilter =
+    genre !== "all" ||
+    activeYear !== "all" ||
+    scoreRange[0] !== 0 ||
+    scoreRange[1] !== 10;
   return (
-    <div
-      style={{ paddingTop: "60px", minHeight: "100vh", background: "#0A0A0A" }}
-    >
+    <div className={styles.page}>
       <div className="container">
-        <div style={{ paddingTop: "40px", paddingBottom: "64px" }}>
+        <div className={styles.inner}>
           {/* Breadcrumb */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "20px",
-            }}
-          >
-            <button
-              onClick={() => navigate("/")}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#888",
-                fontSize: "13px",
-                cursor: "pointer",
-                padding: 0,
-                fontFamily: "'Prompt', sans-serif",
-                transition: "color 0.15s",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#F5C518")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#888")}
-            >
+          <div className={styles.breadcrumb}>
+            <button className={styles.crumbLink} onClick={() => navigate("/")}>
               หน้าแรก
             </button>
-            <span style={{ color: "#444", fontSize: "13px" }}>›</span>
-            <span
-              style={{
-                color: "#fff",
-                fontSize: "13px",
-                fontFamily: "'Prompt', sans-serif",
-              }}
-            >
-              รายการหนังทั้งหมด
-            </span>
+            <span className={styles.crumbSep}>›</span>
+            <span className={styles.crumbCurrent}>รายการหนังทั้งหมด</span>
           </div>
 
           {/* Page Header */}
-          <div style={{ marginBottom: "32px" }}>
-            <h1
-              style={{
-                fontFamily: "'Prompt', sans-serif",
-                fontSize: "28px",
-                fontWeight: 800,
-                color: "#fff",
-                margin: "0 0 6px",
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-              }}
-            >
-              <span
-                style={{
-                  width: "5px",
-                  height: "28px",
-                  background: "#F5C518",
-                  borderRadius: "3px",
-                  display: "block",
-                }}
-              />
-              รายการหนังทั้งหมด
-            </h1>
-            <p
-              style={{
-                color: "#555",
-                fontSize: "14px",
-                fontFamily: "'Prompt', sans-serif",
-                margin: 0,
-                paddingLeft: "17px",
-              }}
-            >
-              {filtered.length} เรื่อง
-            </p>
+          <div className={styles.pageHeader}>
+            <div className={styles.headerRow}>
+              <div>
+                <h1 className={styles.pageTitle}>
+                  <span className={styles.pageTitleBar} />
+                  รายการหนังทั้งหมด
+                </h1>
+                <p className={styles.count}>พบ {filtered.length} เรื่อง</p>
+              </div>
+
+              {/* Search + Year Dropdown */}
+              <div className={styles.controls}>
+                {/* Search Bar */}
+                <div className={styles.searchWrap}>
+                  <span className={styles.searchIcon}>
+                    <svg
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.35-4.35" />
+                    </svg>
+                  </span>
+                  <input
+                    type="text"
+                    className={styles.searchInput}
+                    placeholder="ค้นหาหนัง, ผู้กำกับ..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                  {search && (
+                    <button
+                      className={styles.searchClear}
+                      onClick={() => setSearch("")}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {/* Year Dropdown */}
+                <div ref={yearDropdownRef} className={styles.yearWrap}>
+                  <button
+                    onClick={() => setYearOpen(!yearOpen)}
+                    className={`${styles.yearBtn} ${
+                      yearOpen || year !== "all" || showCustom
+                        ? styles.yearBtnOn
+                        : ""
+                    } ${
+                      year !== "all" || showCustom ? styles.yearBtnSelected : ""
+                    }`}
+                  >
+                    <span>
+                      {showCustom && customYear
+                        ? customYear
+                        : year !== "all"
+                          ? year
+                          : "ทุกปี"}
+                    </span>
+                    <svg
+                      width="12"
+                      height="12"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                    >
+                      <path d={yearOpen ? "m18 15-6-6-6 6" : "m6 9 6 6 6-6"} />
+                    </svg>
+                  </button>
+
+                  {yearOpen && (
+                    <div className={styles.yearMenu}>
+                      {/* ทุกปี */}
+                      <button
+                        className={`${styles.yearOption} ${
+                          year === "all" && !showCustom
+                            ? styles.yearOptionActive
+                            : ""
+                        }`}
+                        onClick={() => {
+                          setYear("all");
+                          setShowCustom(false);
+                          setCustomYear("");
+                          setYearOpen(false);
+                        }}
+                      >
+                        ทุกปี
+                      </button>
+
+                      {/* 10 ปีย้อนหลัง */}
+                      {Array.from(
+                        { length: 10 },
+                        (_, i) => new Date().getFullYear() - i,
+                      ).map((y) => (
+                        <button
+                          key={y}
+                          className={`${styles.yearOption} ${
+                            year === String(y) && !showCustom
+                              ? styles.yearOptionActive
+                              : ""
+                          }`}
+                          onClick={() => {
+                            setYear(String(y));
+                            setShowCustom(false);
+                            setCustomYear("");
+                            setYearOpen(false);
+                          }}
+                        >
+                          {y}
+                        </button>
+                      ))}
+
+                      {/* เส้นคั่น */}
+                      <div className={styles.yearDivider} />
+
+                      {/* กรอกปีเอง */}
+                      <div className={styles.customWrap}>
+                        <div className={styles.customLabel}>กรอกปีเอง</div>
+                        <div className={styles.customRow}>
+                          <input
+                            type="number"
+                            placeholder="เช่น 2015"
+                            value={customYear}
+                            className={`${styles.customInput} ${
+                              showCustom && customYear
+                                ? styles.customInputFilled
+                                : ""
+                            }`}
+                            onChange={(e) => {
+                              setCustomYear(e.target.value);
+                              setShowCustom(true);
+                              setYear("all");
+                            }}
+                          />
+                          <button
+                            className={`${styles.okBtn} ${
+                              customYear ? styles.okBtnReady : ""
+                            }`}
+                            onClick={() => {
+                              if (customYear) {
+                                setShowCustom(true);
+                                setYearOpen(false);
+                              }
+                            }}
+                          >
+                            ตกลง
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Layout */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "220px 1fr",
-              gap: "32px",
-              alignItems: "start",
-            }}
-          >
+          <div className={styles.layout}>
             {/* ── Sidebar ── */}
-            <div
-              style={{
-                background: "#111",
-                border: "1px solid rgba(255,255,255,0.06)",
-                borderRadius: "14px",
-                padding: "20px",
-                position: "sticky",
-                top: "80px",
-              }}
-            >
+            <div className={styles.sidebar}>
               {/* Reset */}
               {hasFilter && (
-                <button
-                  onClick={resetAll}
-                  style={{
-                    width: "100%",
-                    background: "rgba(229,9,20,0.1)",
-                    border: "1px solid rgba(229,9,20,0.2)",
-                    color: "#FF6B6B",
-                    padding: "8px",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontFamily: "'Prompt', sans-serif",
-                    fontSize: "12px",
-                    marginBottom: "20px",
-                    fontWeight: 600,
-                  }}
-                >
+                <button className={styles.resetAll} onClick={resetAll}>
                   ล้างตัวกรองทั้งหมด
                 </button>
               )}
@@ -278,30 +382,45 @@ export default function MovieBrowsePage({ user, onToast }) {
                 ))}
               </SidebarSection>
 
-              {/* ปีที่ออกฉาย */}
-              <SidebarSection title="ปีที่ออกฉาย">
-                {YEARS.map((y) => (
-                  <FilterBtn
-                    key={y}
-                    active={year === y}
-                    onClick={() => setYear(y)}
-                  >
-                    {y}
-                  </FilterBtn>
-                ))}
-              </SidebarSection>
-
               {/* ช่วงคะแนน */}
               <SidebarSection title="คะแนน">
-                {SCORES.map((s) => (
-                  <FilterBtn
-                    key={s.id}
-                    active={score === s.id}
-                    onClick={() => setScore(s.id)}
-                  >
-                    {s.label}
-                  </FilterBtn>
-                ))}
+                <div className={styles.scoreBox}>
+                  {/* แสดงค่าปัจจุบัน */}
+                  <div className={styles.scoreValues}>
+                    <span className={styles.scoreChip}>
+                      ★ {scoreRange[0].toFixed(1)}
+                    </span>
+                    <span className={styles.scoreDash}>—</span>
+                    <span className={styles.scoreChip}>
+                      ★ {scoreRange[1].toFixed(1)}
+                    </span>
+                  </div>
+
+                  {/* Dual Slider */}
+                  <DualSlider
+                    min={0}
+                    max={10}
+                    step={0.5}
+                    value={scoreRange}
+                    onChange={setScoreRange}
+                  />
+
+                  {/* Label */}
+                  <div className={styles.scaleRow}>
+                    <span className={styles.scaleText}>0</span>
+                    <span className={styles.scaleText}>10</span>
+                  </div>
+
+                  {/* Reset */}
+                  {(scoreRange[0] !== 0 || scoreRange[1] !== 10) && (
+                    <button
+                      className={styles.scoreReset}
+                      onClick={() => setScoreRange([0, 10])}
+                    >
+                      รีเซ็ต
+                    </button>
+                  )}
+                </div>
               </SidebarSection>
 
               {/* เรียงลำดับ */}
@@ -321,46 +440,15 @@ export default function MovieBrowsePage({ user, onToast }) {
             {/* ── Grid ── */}
             <div>
               {filtered.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "80px 0" }}>
-                  <div style={{ fontSize: "48px", marginBottom: "16px" }}>
-                    🎬
-                  </div>
-                  <p
-                    style={{
-                      color: "#555",
-                      fontFamily: "'Prompt', sans-serif",
-                      fontSize: "16px",
-                    }}
-                  >
-                    ไม่พบหนังที่ตรงกับตัวกรอง
-                  </p>
-                  <button
-                    onClick={resetAll}
-                    style={{
-                      marginTop: "16px",
-                      background: "#F5C518",
-                      color: "#000",
-                      border: "none",
-                      padding: "10px 24px",
-                      borderRadius: "8px",
-                      fontFamily: "'Prompt', sans-serif",
-                      fontSize: "14px",
-                      fontWeight: 700,
-                      cursor: "pointer",
-                    }}
-                  >
+                <div className={styles.empty}>
+                  <div className={styles.emptyIcon}>🎬</div>
+                  <p className={styles.emptyText}>ไม่พบหนังที่ตรงกับตัวกรอง</p>
+                  <button className={styles.emptyBtn} onClick={resetAll}>
                     ล้างตัวกรอง
                   </button>
                 </div>
               ) : (
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns:
-                      "repeat(auto-fill, minmax(165px, 1fr))",
-                    gap: "16px",
-                  }}
-                >
+                <div className={styles.grid}>
                   {filtered.map((m) => (
                     <MovieCard
                       key={m.id}

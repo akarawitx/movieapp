@@ -1,0 +1,35 @@
+.tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 28px;
+  scrollbar-width: none;
+}
+
+.tab {
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  color: #aaa;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  font-family: "Prompt", sans-serif;
+}
+
+.tab:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+/* ต้องอยู่หลัง .tab:hover เพื่อให้แท็บที่เลือกอยู่ไม่เปลี่ยนสีตอน hover */
+.active,
+.active:hover {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #000;
+}

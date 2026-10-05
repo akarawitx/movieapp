@@ -1,0 +1,57 @@
+.wrapper {
+  margin-top: -20px;
+  position: relative;
+  z-index: 10;
+}
+
+.box {
+  background: linear-gradient(135deg, var(--dark3), #222);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 40px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  text-align: center;
+}
+
+.item {
+  position: relative;
+}
+
+.divider {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1px;
+  height: 50%;
+  background: var(--border);
+}
+
+.number {
+  font-size: 36px;
+  font-weight: 900;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.label {
+  color: #aaa;
+  font-size: 13px;
+}
+
+/* ของแถม: มือถือแสดง 2 คอลัมน์ (inline style ทำแบบนี้ไม่ได้) */
+@media (max-width: 768px) {
+  .box {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 24px;
+  }
+  .divider {
+    display: none;
+  }
+}

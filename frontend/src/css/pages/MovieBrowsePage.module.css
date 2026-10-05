@@ -1,0 +1,523 @@
+/* ═════════ Page layout ═════════ */
+.page {
+  padding-top: 60px;
+  min-height: 100vh;
+  background: var(--dark);
+}
+
+.inner {
+  padding-top: 40px;
+  padding-bottom: 64px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.crumbLink {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  font-family: "Prompt", sans-serif;
+  transition: color 0.15s;
+}
+
+.crumbLink:hover {
+  color: var(--gold);
+}
+
+.crumbSep {
+  color: #444;
+  font-size: 13px;
+}
+
+.crumbCurrent {
+  color: #fff;
+  font-size: 13px;
+}
+
+/* ── Page header ── */
+.pageHeader {
+  margin-bottom: 32px;
+}
+
+.headerRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.pageTitle {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageTitleBar {
+  width: 5px;
+  height: 28px;
+  background: var(--gold);
+  border-radius: 3px;
+  display: block;
+}
+
+.count {
+  color: #555;
+  font-size: 14px;
+  margin: 0;
+  padding-left: 17px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* ── Search ── */
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 260px;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 14px;
+  color: #555;
+  pointer-events: none;
+  display: flex;
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 40px 11px 42px;
+  color: #fff;
+  font-family: "Prompt", sans-serif;
+  font-size: 14px;
+  outline: none;
+}
+
+.searchInput:focus {
+  border-color: rgba(245, 197, 24, 0.4);
+  background: var(--card-bg);
+}
+
+.searchClear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* ── Year dropdown ── */
+.yearWrap {
+  position: relative;
+}
+
+.yearBtn {
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  color: #aaa;
+  padding: 11px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  min-width: 130px;
+  justify-content: space-between;
+}
+
+/* เปิดเมนูอยู่ หรือเลือกปีไว้แล้ว */
+.yearBtnOn {
+  background: rgba(245, 197, 24, 0.1);
+  border-color: rgba(245, 197, 24, 0.4);
+}
+
+/* เลือกปีไว้แล้ว (ตัวหนังสือเป็นสีทอง) */
+.yearBtnSelected {
+  color: var(--gold);
+}
+
+.yearMenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 160px;
+  z-index: 999;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.yearOption {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #aaa;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.yearOption:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ccc;
+}
+
+/* ต้องอยู่หลัง .yearOption:hover */
+.yearOptionActive,
+.yearOptionActive:hover {
+  background: rgba(245, 197, 24, 0.1);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.yearDivider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.06);
+  margin: 6px 0;
+}
+
+.customWrap {
+  padding: 6px 8px;
+}
+
+.customLabel {
+  font-size: 11px;
+  color: #555;
+  margin-bottom: 6px;
+}
+
+.customRow {
+  display: flex;
+  gap: 6px;
+}
+
+.customInput {
+  flex: 1;
+  width: 100px;
+  background: var(--dark2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: #fff;
+  font-family: "Prompt", sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+
+.customInput:focus,
+.customInputFilled {
+  border-color: rgba(245, 197, 24, 0.4);
+}
+
+.okBtn {
+  background: #222;
+  border: none;
+  border-radius: 6px;
+  color: #555;
+  padding: 7px 10px;
+  cursor: default;
+  font-family: "Prompt", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ต้องอยู่หลัง .okBtn */
+.okBtnReady {
+  background: var(--gold);
+  color: #000;
+  cursor: pointer;
+}
+
+/* ═════════ Sidebar ═════════ */
+.sidebar {
+  background: var(--dark2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+
+.resetAll {
+  width: 100%;
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.2);
+  color: #ff6b6b;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  font-size: 12px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.sideSection {
+  margin-bottom: 28px;
+}
+
+.sideTitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sideBar {
+  width: 3px;
+  height: 14px;
+  background: var(--gold);
+  border-radius: 2px;
+  display: block;
+}
+
+.filterBtn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 1px solid transparent;
+  color: #888;
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  font-size: 13px;
+  margin-bottom: 2px;
+  transition: all 0.15s;
+  font-weight: 400;
+}
+
+.filterBtn:hover {
+  color: #ccc;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* ต้องอยู่หลัง .filterBtn:hover */
+.filterBtnActive,
+.filterBtnActive:hover {
+  background: rgba(245, 197, 24, 0.12);
+  border-color: rgba(245, 197, 24, 0.35);
+  color: var(--gold);
+  font-weight: 600;
+}
+
+/* ── Score box ── */
+.scoreBox {
+  padding: 4px 4px 8px;
+}
+
+.scoreValues {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.scoreChip {
+  background: rgba(245, 197, 24, 0.12);
+  border: 1px solid rgba(245, 197, 24, 0.3);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 6px;
+}
+
+.scoreDash {
+  color: #444;
+  font-size: 12px;
+  align-self: center;
+}
+
+.scaleRow {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.scaleText {
+  font-size: 11px;
+  color: #444;
+}
+
+.scoreReset {
+  margin-top: 10px;
+  width: 100%;
+  background: none;
+  border: 1px solid var(--border);
+  color: #666;
+  font-size: 11px;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+}
+
+/* ═════════ Dual slider ═════════ */
+.sliderWrap {
+  position: relative;
+  height: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: #2a2a2a;
+  border-radius: 2px;
+}
+
+/* left / width คำนวณจากค่า slider จึงกำหนดใน JSX */
+.trackActive {
+  position: absolute;
+  height: 4px;
+  background: linear-gradient(90deg, #f5c518, #ff6b35);
+  border-radius: 2px;
+}
+
+.slider {
+  position: absolute;
+  width: 100%;
+}
+
+.slider input[type="range"] {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+  pointer-events: none;
+  outline: none;
+}
+
+.slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f5c518;
+  border: 2px solid #0a0a0a;
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.2);
+  transition: box-shadow 0.15s;
+}
+
+.slider input[type="range"]::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 5px rgba(245, 197, 24, 0.3);
+}
+
+.slider input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #f5c518;
+  border: 2px solid #0a0a0a;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+/* ═════════ Grid / Empty ═════════ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 16px;
+}
+
+.empty {
+  text-align: center;
+  padding: 80px 0;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.emptyText {
+  color: #555;
+  font-size: 16px;
+}
+
+.emptyBtn {
+  margin-top: 16px;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: "Prompt", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ของแถม: แท็บเล็ต/มือถือ */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+  }
+  .searchWrap {
+    min-width: 0;
+    flex: 1;
+  }
+  .controls {
+    width: 100%;
+  }
+}

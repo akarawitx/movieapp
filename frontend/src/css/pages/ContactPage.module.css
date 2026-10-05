@@ -1,0 +1,158 @@
+.page {
+  padding-top: 60px;
+  min-height: 100vh;
+  background: var(--dark);
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 80px 5% 56px;
+  text-align: center;
+  background: radial-gradient(
+    ellipse at 50% 0%,
+    rgba(245, 197, 24, 0.14),
+    transparent 65%
+  );
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(229, 9, 20, 0.2);
+  border: 1px solid rgba(229, 9, 20, 0.4);
+  color: #ff6b6b;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.heroTitle {
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 14px;
+}
+
+.heroDesc {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #aaa;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* ── Layout ── */
+.layout {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 32px;
+  padding-bottom: 80px;
+  align-items: start;
+}
+
+/* ── Info cards ── */
+.infoList {
+  display: grid;
+  gap: 16px;
+}
+
+.infoCard {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
+  padding: 20px 22px;
+}
+
+.infoIcon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: rgba(245, 197, 24, 0.1);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.infoLabel {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 2px;
+}
+
+.infoValue {
+  font-size: 14px;
+  color: #fff;
+  font-weight: 500;
+}
+
+/* ── Form ── */
+.form {
+  background: linear-gradient(135deg, var(--dark3), #202020);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px;
+}
+
+.formTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+.field {
+  display: block;
+  margin-bottom: 18px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.input {
+  width: 100%;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px 14px;
+  color: #fff;
+  font-size: 14px;
+  font-family: "Prompt", sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--gold);
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.submit {
+  width: 100%;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 13px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  transition: all 0.2s;
+}
+
+.submit:hover {
+  background: var(--red-dark);
+}

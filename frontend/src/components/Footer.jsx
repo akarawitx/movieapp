@@ -1,3 +1,5 @@
+import styles from "../css/components/Footer.module.css";
+
 const LogoSVG = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
     <rect
@@ -53,53 +55,15 @@ export default function Footer() {
   ];
 
   return (
-    <footer
-      style={{
-        background: "#050505",
-        borderTop: "1px solid rgba(255,255,255,0.06)",
-        padding: "48px 5% 32px",
-      }}
-    >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr 1fr 1fr",
-          gap: "40px",
-          marginBottom: "40px",
-        }}
-      >
+    <footer className={styles.footer}>
+      <div className={styles.grid}>
         {/* Brand */}
-        <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-              marginBottom: "12px",
-            }}
-          >
+        <div className={styles.brand}>
+          <div className={styles.logoRow}>
             <LogoSVG />
-            <span
-              style={{
-                fontFamily: "'Goldman', sans-serif",
-                fontSize: "20px",
-                fontWeight: 700,
-                background: "linear-gradient(135deg, #F5C518, #FF6B35)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-              }}
-            >
-              PixelFilm
-            </span>
+            <span className={styles.logoText}>PixelFilm</span>
           </div>
-          <p
-            style={{
-              color: "#666",
-              fontSize: "13px",
-              lineHeight: 1.7,
-              fontFamily: "'Prompt', sans-serif",
-            }}
-          >
+          <p className={styles.desc}>
             แพลตฟอร์มรีวิวหนังและซีรีส์ที่ใหญ่ที่สุดในไทย รีวิวโดยคนไทย
             สำหรับคนไทย ค้นพบหนังดีๆ อ่านรีวิวจริงจากผู้ชมทั่วประเทศ
           </p>
@@ -108,32 +72,11 @@ export default function Footer() {
         {/* Cols */}
         {cols.map((col) => (
           <div key={col.title}>
-            <div
-              style={{
-                fontFamily: "'Prompt', sans-serif",
-                fontSize: "14px",
-                fontWeight: 700,
-                marginBottom: "16px",
-                color: "#fff",
-              }}
-            >
-              {col.title}
-            </div>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+            <div className={styles.colTitle}>{col.title}</div>
+            <ul className={styles.list}>
               {col.links.map((link) => (
-                <li key={link} style={{ marginBottom: "10px" }}>
-                  <a
-                    href="#"
-                    style={{
-                      color: "#666",
-                      textDecoration: "none",
-                      fontSize: "13px",
-                      fontFamily: "'Prompt', sans-serif",
-                      transition: "color 0.15s",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.color = "#F5C518")}
-                    onMouseLeave={(e) => (e.target.style.color = "#666")}
-                  >
+                <li key={link} className={styles.listItem}>
+                  <a href="#" className={styles.link}>
                     {link}
                   </a>
                 </li>
@@ -143,35 +86,11 @@ export default function Footer() {
         ))}
       </div>
 
-      <div
-        style={{
-          borderTop: "1px solid rgba(255,255,255,0.06)",
-          paddingTop: "24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: "12px",
-        }}
-      >
-        <span
-          style={{
-            color: "#444",
-            fontSize: "12px",
-            fontFamily: "'Prompt', sans-serif",
-          }}
-        >
+      <div className={styles.bottom}>
+        <span className={styles.copy}>
           © 2024 PixelFilm Thailand. สงวนลิขสิทธิ์ทุกประการ
         </span>
-        <span
-          style={{
-            color: "#444",
-            fontSize: "12px",
-            fontFamily: "'Prompt', sans-serif",
-          }}
-        >
-          สร้างด้วยความรักสำหรับคนรักหนัง
-        </span>
+        <span className={styles.copy}>สร้างด้วยความรักสำหรับคนรักหนัง</span>
       </div>
     </footer>
   );

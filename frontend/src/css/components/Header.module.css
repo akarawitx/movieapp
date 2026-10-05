@@ -1,0 +1,337 @@
+/* ═════════ Navbar ═════════ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: rgba(5, 5, 5, 0.95);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 4%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-right: 28px;
+}
+
+.logoText {
+  font-family: "Goldman", sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+}
+
+/* ── Nav links ── */
+.links {
+  display: flex;
+  gap: 4px;
+  margin-right: 20px;
+  align-items: center;
+}
+
+.navBtn {
+  color: #999;
+  background: none;
+  border: none;
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.navBtn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ต้องอยู่หลัง .navBtn:hover */
+.navBtnActive,
+.navBtnActive:hover {
+  color: var(--gold);
+  background: rgba(245, 197, 24, 0.08);
+}
+
+/* ── Auth ── */
+.auth {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: auto;
+}
+
+.btnLogin {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #ccc;
+  font-size: 13px;
+  padding: 6px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+}
+
+.btnLogin:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.btnRegister {
+  background: var(--gold);
+  color: #000;
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 7px;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+}
+
+.btnRegister:hover {
+  background: var(--gold-dark);
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #000;
+  font-family: "Prompt", sans-serif;
+}
+
+.avatar:hover {
+  border-color: var(--gold);
+}
+
+/* ═════════ Modal ═════════ */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modalBox {
+  background: var(--dark3);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 420px;
+  padding: 36px 32px;
+  position: relative;
+  animation: modalIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: #888;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Modal logo ── */
+.modalLogo {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.modalLogoRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.modalLogoText {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.modalSub {
+  color: #777;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ── Form field ── */
+.field {
+  margin-bottom: 14px;
+}
+
+.fieldLabel {
+  display: block;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.fieldInput {
+  width: 100%;
+  background: var(--dark2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #fff;
+  font-family: "Prompt", sans-serif;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.fieldInput:focus {
+  border-color: rgba(245, 197, 24, 0.45);
+}
+
+/* ── Buttons / links in modal ── */
+.submitBtn {
+  width: 100%;
+  background: var(--gold);
+  color: #000;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+  margin-top: 6px;
+}
+
+.switchText {
+  text-align: center;
+  margin-top: 18px;
+  font-size: 13px;
+  color: #666;
+}
+
+.switchLink {
+  color: var(--gold);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ── Profile modal ── */
+.profileHead {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profileAvatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f5c518, #ff6b35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  color: #000;
+  margin: 0 auto 10px;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.profileRole {
+  color: #666;
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.statBox {
+  background: var(--dark2);
+  border-radius: 8px;
+  padding: 12px 8px;
+  text-align: center;
+}
+
+.statValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.statLabel {
+  font-size: 11px;
+  color: #666;
+}
+
+.logoutBtn {
+  width: 100%;
+  background: rgba(229, 9, 20, 0.1);
+  color: #ff6b6b;
+  border: 1px solid rgba(229, 9, 20, 0.18);
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Prompt", sans-serif;
+}
