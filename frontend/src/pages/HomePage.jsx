@@ -128,7 +128,7 @@ export default function HomePage({ user, onToast }) {
         <section className={styles.section}>
           <SectionHeader
             title="รีวิวแนะนำ"
-            onViewAll={() => navigate("/movies?sort=reviews")}
+            onViewAll={() => navigate("/reviews")}
           />
 
           <div className={styles.featured}>

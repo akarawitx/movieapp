@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import useLoginPrompt from "../../hooks/useLoginPrompt";
 import { getMovieReviews, getRatingDistribution } from "../../data/movieDetails";
@@ -175,13 +176,21 @@ function ReviewCard({ review, liked, onLike, mine, avatar, actions }) {
           {mine ? (
             <Avatar src={avatar} size={40} />
           ) : (
-            <span className={styles.initials} style={{ background: review.color }}>
-              {review.name.slice(0, 2)}
-            </span>
+            <Link to={`/u/${review.username}`} aria-label={`โปรไฟล์ของ ${review.name}`}>
+              <span className={styles.initials} style={{ background: review.color }}>
+                {review.name.slice(0, 2)}
+              </span>
+            </Link>
           )}
           <div>
             <div className={styles.name}>
-              {review.name}
+              {mine ? (
+                review.name
+              ) : (
+                <Link to={`/u/${review.username}`} className={styles.nameLink}>
+                  {review.name}
+                </Link>
+              )}
               {mine && <span className={styles.mineTag}>รีวิวของคุณ</span>}
             </div>
             <time className={styles.date}>{formatDate(review.date)}</time>

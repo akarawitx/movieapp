@@ -253,6 +253,10 @@ movieapp/
 | `/movies` | รายการหนังทั้งหมด | ค้นหา กรอง และเรียงลำดับหนัง |
 | `/movies/:id` | รายละเอียดหนัง | เช่น `/movies/dune2` และ `/movies/dune2#reviews` |
 | `/search?q=` | ผลการค้นหา | เช่น `/search?q=nolan` |
+| `/charts` | Top Charts | อันดับคะแนนสูงสุด / รีวิวมากที่สุด กรองแนวและปี |
+| `/calendar` | ปฏิทินฉาย | หนังจัดกลุ่มตามเดือนที่เข้าฉาย |
+| `/reviews` | รีวิวจากชุมชน | ฟีดรีวิวทั้งหมด เรียงล่าสุด/ยอดนิยม กรองคะแนนและแนว |
+| `/u/:username` | โปรไฟล์สาธารณะ | เช่น `/u/tonkla_cine` (ของตัวเองจะเห็นมุมมองที่ผู้อื่นเห็น) |
 | `/watchlist` | รายการอยากดู | 🔒 ต้องล็อกอิน |
 | `/profile` | โปรไฟล์ของฉัน | 🔒 ต้องล็อกอิน |
 | `/settings/:section` | ตั้งค่า | 🔒 `profile`, `avatar`, `security`, `preferences`, `danger` |
@@ -271,7 +275,7 @@ movieapp/
 
 ### Routes ที่วางแผนไว้ (ยังไม่มี)
 
-`/charts`, `/upcoming`, `/reviews`, `/u/:username` (โปรไฟล์ผู้ใช้อื่น), `/privacy`, `/terms`, `/forgot-password`
+`/privacy`, `/terms`, `/forgot-password`
 และ Django Admin ที่ `http://127.0.0.1:8000/admin/` (ขึ้นกับการตั้งค่า Backend)
 
 ---
@@ -441,7 +445,7 @@ Backend พร้อมที่ `http://127.0.0.1:8000`
 
 ### ปรับปรุง Frontend
 
-- หน้า Top Charts, ปฏิทินฉาย, ฟีดรีวิว, โปรไฟล์ผู้ใช้อื่น, นโยบาย/เงื่อนไข, ลืมรหัสผ่าน
+- หน้านโยบาย/เงื่อนไข และลืมรหัสผ่าน
 - Loading Skeleton ระหว่างโหลดข้อมูล (เมื่อต่อ API)
 - Pagination / Infinite Scroll
 - หน้า Create / Edit หนัง (สำหรับผู้ดูแล)

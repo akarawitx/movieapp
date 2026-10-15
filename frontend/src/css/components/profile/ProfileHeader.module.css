@@ -45,6 +45,10 @@
   transition: opacity 0.2s;
 }
 
+div.avatarBtn {
+  cursor: default;
+}
+
 .avatarBtn:hover .avatarOverlay,
 .avatarBtn:focus-visible .avatarOverlay {
   opacity: 1;

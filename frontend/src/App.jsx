@@ -15,6 +15,8 @@ import WatchlistPage from "./pages/WatchlistPage";
 import SearchPage from "./pages/SearchPage";
 import ChartsPage from "./pages/ChartsPage";
 import CalendarPage from "./pages/CalendarPage";
+import ReviewsFeedPage from "./pages/ReviewsFeedPage";
+import PublicProfilePage from "./pages/PublicProfilePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
 import { load, save } from "./utils/storage";
@@ -66,6 +68,8 @@ export default function App() {
               path="/charts"
               element={<ChartsPage user={user} onToast={showToast} />}
             />
+            <Route path="/reviews" element={<ReviewsFeedPage user={user} />} />
+            <Route path="/u/:username" element={<PublicProfilePage user={user} />} />
             <Route
               path="/calendar"
               element={<CalendarPage user={user} onToast={showToast} />}

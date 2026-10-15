@@ -19,8 +19,9 @@ function EmptyState({ text }) {
   );
 }
 
-function ReviewsTab({ reviews }) {
-  if (!reviews.length) return <EmptyState text="คุณยังไม่ได้เขียนรีวิว" />;
+function ReviewsTab({ reviews, readOnly }) {
+  if (!reviews.length)
+    return <EmptyState text={readOnly ? "ยังไม่มีรีวิว" : "คุณยังไม่ได้เขียนรีวิว"} />;
   return (
     <div className={styles.reviewList}>
       {reviews.map((r) => {
@@ -73,7 +74,8 @@ function PosterGrid({ items, emptyText }) {
   );
 }
 
-export default function ProfileActivityTabs({ activity }) {
+// readOnly = โปรไฟล์สาธารณะ, hideWatchlist = เจ้าของปิดการแสดงรายการอยากดู
+export default function ProfileActivityTabs({ activity, readOnly = false, hideWatchlist = false }) {
   const [tab, setTab] = useState("reviews");
 
   const watchlist = activity.watchlist
@@ -84,8 +86,8 @@ export default function ProfileActivityTabs({ activity }) {
     .filter((x) => x.movie);
 
   const tabs = [
-    { id: "reviews", label: "รีวิวของฉัน", count: activity.reviews.length },
-    { id: "watchlist", label: "อยากดู", count: watchlist.length },
+    { id: "reviews", label: readOnly ? "รีวิว" : "รีวิวของฉัน", count: activity.reviews.length },
+    ...(hideWatchlist ? [] : [{ id: "watchlist", label: "อยากดู", count: watchlist.length }]),
     { id: "ratings", label: "ให้คะแนนแล้ว", count: ratings.length },
   ];
 
@@ -107,11 +109,11 @@ export default function ProfileActivityTabs({ activity }) {
       </div>
 
       <div className={styles.panel} role="tabpanel">
-        {tab === "reviews" && <ReviewsTab reviews={activity.reviews} />}
+        {tab === "reviews" && <ReviewsTab reviews={activity.reviews} readOnly={readOnly} />}
         {tab === "watchlist" && (
           <>
             <PosterGrid items={watchlist} emptyText="ยังไม่มีหนังในรายการอยากดู" />
-            {watchlist.length > 0 && (
+            {watchlist.length > 0 && !readOnly && (
               <Link to="/watchlist" className={styles.viewAll}>
                 จัดการรายการอยากดู →
               </Link>
@@ -119,7 +121,10 @@ export default function ProfileActivityTabs({ activity }) {
           </>
         )}
         {tab === "ratings" && (
-          <PosterGrid items={ratings} emptyText="คุณยังไม่ได้ให้คะแนนหนังเรื่องไหน" />
+          <PosterGrid
+            items={ratings}
+            emptyText={readOnly ? "ยังไม่ได้ให้คะแนนหนังเรื่องไหน" : "คุณยังไม่ได้ให้คะแนนหนังเรื่องไหน"}
+          />
         )}
       </div>
     </section>

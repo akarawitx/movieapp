@@ -8,8 +8,28 @@ const defaults = import.meta.glob(
 );
 const DEFAULT_AVATAR = Object.values(defaults)[0];
 
-export default function Avatar({ src, size = 34, alt = "รูปโปรไฟล์", className = "" }) {
+// ส่ง color + name มาด้วย (เช่น นักรีวิวที่ไม่มีรูป) จะแสดงอักษรย่อบนพื้นสีแทนรูปตั้งต้น
+export default function Avatar({
+  src,
+  size = 34,
+  alt = "รูปโปรไฟล์",
+  className = "",
+  name,
+  color,
+}) {
   const image = src || DEFAULT_AVATAR;
+  if (!src && color && name) {
+    return (
+      <span
+        className={`${styles.avatar} ${styles.initials} ${className}`}
+        style={{ width: size, height: size, background: color, fontSize: size * 0.36 }}
+        role="img"
+        aria-label={alt}
+      >
+        {name.slice(0, 2)}
+      </span>
+    );
+  }
   return (
     <span
       className={`${styles.avatar} ${className}`}

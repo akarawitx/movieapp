@@ -1,0 +1,81 @@
+.page {
+  padding-top: 60px;
+  min-height: 100vh;
+  background: var(--dark);
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 5% 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  background: rgba(0, 180, 216, 0.08);
+  border: 1px solid rgba(0, 180, 216, 0.3);
+  border-radius: var(--radius);
+  color: #cfeff6;
+  font-size: 13.5px;
+}
+
+.banner svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.banner a {
+  margin-left: auto;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.banner a:hover {
+  text-decoration: underline;
+}
+
+.backBtn {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ddd;
+  font-size: 13px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.backBtn:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.private {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 48px 20px;
+  color: var(--text-muted);
+  background: var(--dark2);
+  border: 1px dashed rgba(255, 255, 255, 0.14);
+  border-radius: 16px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-top: 20px;
+  }
+  .banner a {
+    margin-left: 28px;
+  }
+}

@@ -13,6 +13,21 @@
   gap: 20px;
 }
 
+.publicLink {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: -8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.publicLink:hover {
+  color: var(--gold);
+}
+
 .card {
   background: var(--dark2);
   border: 1px solid var(--border);

@@ -22,3 +22,9 @@
   padding: 18%;
   box-sizing: border-box;
 }
+
+.initials {
+  color: #000;
+  font-weight: 700;
+  line-height: 1;
+}

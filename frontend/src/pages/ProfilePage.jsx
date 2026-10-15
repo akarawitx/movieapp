@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileStats from "../components/profile/ProfileStats";
@@ -12,6 +13,10 @@ export default function ProfilePage() {
     <div className={styles.page}>
       <div className={styles.container}>
         <ProfileHeader profile={profile} />
+        <Link to={`/u/${profile.username}`} className={styles.publicLink}>
+          <Icon name="eye" size={15} />
+          ดูโปรไฟล์ในมุมมองที่ผู้อื่นเห็น
+        </Link>
         <ProfileStats activity={activity} />
 
         <section className={styles.card}>

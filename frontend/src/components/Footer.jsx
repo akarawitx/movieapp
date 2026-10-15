@@ -49,7 +49,7 @@ export default function Footer() {
     {
       title: "บริการ",
       links: [
-        { label: "รีวิวหนัง" },
+        { label: "รีวิวหนัง", to: "/reviews" },
         { label: "Top Charts", to: "/charts" },
         { label: "ปฏิทินฉาย", to: "/calendar" },
         { label: "รายการอยากดู", to: "/watchlist" },

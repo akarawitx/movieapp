@@ -4,7 +4,8 @@ import Icon from "../Icon";
 import { PROFILE_GENRES } from "../../data/profile";
 import styles from "../../css/components/profile/ProfileHeader.module.css";
 
-export default function ProfileHeader({ profile }) {
+// readOnly = โปรไฟล์สาธารณะของคนอื่น (ไม่มีปุ่มแก้ไข / เปลี่ยนรูป), action = ปุ่มเสริมมุมขวา
+export default function ProfileHeader({ profile, readOnly = false, action }) {
   const navigate = useNavigate();
   const fullName = `${profile.firstName} ${profile.lastName}`.trim();
   const joined = new Date(profile.joinedAt).toLocaleDateString("th-TH", {
@@ -20,16 +21,27 @@ export default function ProfileHeader({ profile }) {
       <div className={styles.cover} />
 
       <div className={styles.body}>
-        <button
-          className={styles.avatarBtn}
-          onClick={() => navigate("/settings/avatar")}
-          aria-label="เปลี่ยนรูปโปรไฟล์"
-        >
-          <Avatar src={profile.avatar} size={120} />
-          <span className={styles.avatarOverlay}>
-            <Icon name="camera" size={22} />
-          </span>
-        </button>
+        {readOnly ? (
+          <div className={styles.avatarBtn}>
+            <Avatar
+              src={profile.avatar}
+              size={120}
+              name={fullName || profile.username}
+              color={profile.color}
+            />
+          </div>
+        ) : (
+          <button
+            className={styles.avatarBtn}
+            onClick={() => navigate("/settings/avatar")}
+            aria-label="เปลี่ยนรูปโปรไฟล์"
+          >
+            <Avatar src={profile.avatar} size={120} />
+            <span className={styles.avatarOverlay}>
+              <Icon name="camera" size={22} />
+            </span>
+          </button>
+        )}
 
         <div className={styles.info}>
           <div className={styles.titleRow}>
@@ -37,13 +49,16 @@ export default function ProfileHeader({ profile }) {
               <h1 className={styles.name}>{fullName || profile.username}</h1>
               <p className={styles.username}>@{profile.username}</p>
             </div>
-            <button
-              className={styles.editBtn}
-              onClick={() => navigate("/settings/profile")}
-            >
-              <Icon name="edit" size={15} />
-              แก้ไขโปรไฟล์
-            </button>
+            {action ??
+              (!readOnly && (
+                <button
+                  className={styles.editBtn}
+                  onClick={() => navigate("/settings/profile")}
+                >
+                  <Icon name="edit" size={15} />
+                  แก้ไขโปรไฟล์
+                </button>
+              ))}
           </div>
 
           {profile.bio && <p className={styles.bio}>{profile.bio}</p>}
