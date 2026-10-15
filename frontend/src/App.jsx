@@ -11,6 +11,7 @@ import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MovieDetailPage from "./pages/MovieDetailPage";
+import WatchlistPage from "./pages/WatchlistPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
 import styles from './css/App.module.css'
@@ -23,7 +24,7 @@ export default function App() {
   const showToast = (msg, icon = "✅") => setToast({ show: true, icon, msg });
 
   // เลื่อนขึ้นบนสุดทุกครั้งที่เปลี่ยนหน้า
-  const { pathname } = useLocation();
+  const { pathname, search } = useLocation();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
@@ -46,7 +47,13 @@ export default function App() {
             />
             <Route
               path="/movies"
-              element={<MovieBrowsePage user={user} onToast={showToast} />}
+              element={
+                <MovieBrowsePage
+                  key={search}
+                  user={user}
+                  onToast={showToast}
+                />
+              }
             />
             <Route
               path="/movies/:id"
@@ -62,6 +69,14 @@ export default function App() {
               element={
                 <ProtectedRoute user={user}>
                   <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/watchlist"
+              element={
+                <ProtectedRoute user={user}>
+                  <WatchlistPage onToast={showToast} />
                 </ProtectedRoute>
               }
             />

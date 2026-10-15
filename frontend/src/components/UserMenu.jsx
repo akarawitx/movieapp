@@ -80,6 +80,14 @@ export default function UserMenu({ profile, onLogout }) {
           <button
             className={styles.item}
             role="menuitem"
+            onClick={() => go("/watchlist")}
+          >
+            <Icon name="bookmark" size={17} />
+            รายการอยากดู
+          </button>
+          <button
+            className={styles.item}
+            role="menuitem"
             onClick={() => go("/settings/profile")}
           >
             <Icon name="settings" size={17} />

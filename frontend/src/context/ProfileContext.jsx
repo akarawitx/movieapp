@@ -50,8 +50,35 @@ export function ProfileProvider({ user, onUserChange, children }) {
       watchlist: added
         ? [movieId, ...a.watchlist]
         : a.watchlist.filter((id) => id !== movieId),
+      watched: added ? a.watched : a.watched.filter((id) => id !== movieId),
     }))
     return added
+  }
+
+  // ใส่กลับตำแหน่งเดิม (ใช้กับปุ่ม "เลิกทำ")
+  const restoreWatchlist = (movieId, index, wasWatched) =>
+    setActivity((a) => {
+      if (a.watchlist.includes(movieId)) return a
+      const watchlist = [...a.watchlist]
+      watchlist.splice(Math.min(index, watchlist.length), 0, movieId)
+      return {
+        ...a,
+        watchlist,
+        watched: wasWatched ? [...a.watched, movieId] : a.watched,
+      }
+    })
+
+  const isWatched = (movieId) => activity.watched.includes(movieId)
+
+  const toggleWatched = (movieId) => {
+    const nowWatched = !isWatched(movieId)
+    setActivity((a) => ({
+      ...a,
+      watched: nowWatched
+        ? [...a.watched, movieId]
+        : a.watched.filter((id) => id !== movieId),
+    }))
+    return nowWatched
   }
 
   // ── รีวิวและคะแนน (ผู้ใช้ 1 คนรีวิวหนัง 1 เรื่องได้ 1 ครั้ง เหมือน backend) ──
@@ -98,6 +125,9 @@ export function ProfileProvider({ user, onUserChange, children }) {
         isInWatchlist,
         addToWatchlist,
         toggleWatchlist,
+        restoreWatchlist,
+        isWatched,
+        toggleWatched,
         getMyReview,
         saveReview,
         deleteReview,

@@ -176,6 +176,20 @@
   color: var(--text-dim);
 }
 
+.viewAll {
+  display: block;
+  margin-top: 20px;
+  text-align: center;
+  color: var(--gold);
+  font-size: 13.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.viewAll:hover {
+  text-decoration: underline;
+}
+
 /* ── Empty ── */
 .empty {
   text-align: center;

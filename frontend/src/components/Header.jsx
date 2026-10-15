@@ -4,7 +4,7 @@ import UserMenu from "./UserMenu";
 import { useProfile } from "../context/ProfileContext";
 import styles from "../css/components/Header.module.css";
 
-const PROTECTED_PATHS = ["/profile", "/settings"];
+const PROTECTED_PATHS = ["/profile", "/settings", "/watchlist"];
 
 const NAV_ITEMS = [
   { label: "รายการหนังทั้งหมด", path: "/movies" },

@@ -53,6 +53,7 @@ export const MOCK_ACTIVITY = {
     },
   ],
   watchlist: ['alien', 'civil', 'deadpool', 'ghostbuster'],
+  watched: ['civil'],
   ratings: [
     { movieId: 'dune2', score: 9 },
     { movieId: 'oppenheimer', score: 10 },

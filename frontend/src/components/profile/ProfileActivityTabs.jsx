@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MOVIES } from "../../data/movies";
 import Icon from "../Icon";
 import styles from "../../css/components/profile/ProfileActivityTabs.module.css";
@@ -109,7 +109,14 @@ export default function ProfileActivityTabs({ activity }) {
       <div className={styles.panel} role="tabpanel">
         {tab === "reviews" && <ReviewsTab reviews={activity.reviews} />}
         {tab === "watchlist" && (
-          <PosterGrid items={watchlist} emptyText="ยังไม่มีหนังในรายการอยากดู" />
+          <>
+            <PosterGrid items={watchlist} emptyText="ยังไม่มีหนังในรายการอยากดู" />
+            {watchlist.length > 0 && (
+              <Link to="/watchlist" className={styles.viewAll}>
+                จัดการรายการอยากดู →
+              </Link>
+            )}
+          </>
         )}
         {tab === "ratings" && (
           <PosterGrid items={ratings} emptyText="คุณยังไม่ได้ให้คะแนนหนังเรื่องไหน" />

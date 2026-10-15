@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import styles from "../css/components/Footer.module.css";
 
 const LogoSVG = () => (
@@ -37,19 +38,30 @@ export default function Footer() {
   const cols = [
     {
       title: "หมวดหมู่",
-      links: ["แอ็คชั่น", "ดราม่า", "ตลก", "สยองขวัญ", "หนังไทย"],
+      links: [
+        { label: "แอ็คชั่น", to: "/movies?genre=action" },
+        { label: "ดราม่า", to: "/movies?genre=drama" },
+        { label: "ตลก", to: "/movies?genre=comedy" },
+        { label: "สยองขวัญ", to: "/movies?genre=horror" },
+        { label: "หนังไทย" },
+      ],
     },
     {
       title: "บริการ",
-      links: ["รีวิวหนัง", "Top Charts", "ปฏิทินฉาย", "รายการดู"],
+      links: [
+        { label: "รีวิวหนัง" },
+        { label: "Top Charts", to: "/movies?sort=score" },
+        { label: "ปฏิทินฉาย", to: "/movies?sort=upcoming" },
+        { label: "รายการอยากดู", to: "/watchlist" },
+      ],
     },
     {
       title: "เกี่ยวกับ",
       links: [
-        "เกี่ยวกับเรา",
-        "ติดต่อเรา",
-        "นโยบายความเป็นส่วนตัว",
-        "เงื่อนไขการใช้งาน",
+        { label: "เกี่ยวกับเรา", to: "/about" },
+        { label: "ติดต่อเรา", to: "/contact" },
+        { label: "นโยบายความเป็นส่วนตัว" },
+        { label: "เงื่อนไขการใช้งาน" },
       ],
     },
   ];
@@ -74,11 +86,18 @@ export default function Footer() {
           <div key={col.title}>
             <div className={styles.colTitle}>{col.title}</div>
             <ul className={styles.list}>
+              {/* ลิงก์ที่ยังไม่มีหน้า (ไม่มี to) ยังคงเป็น # ไว้ก่อน */}
               {col.links.map((link) => (
-                <li key={link} className={styles.listItem}>
-                  <a href="#" className={styles.link}>
-                    {link}
-                  </a>
+                <li key={link.label} className={styles.listItem}>
+                  {link.to ? (
+                    <Link to={link.to} className={styles.link}>
+                      {link.label}
+                    </Link>
+                  ) : (
+                    <a href="#" className={styles.link}>
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
             </ul>
