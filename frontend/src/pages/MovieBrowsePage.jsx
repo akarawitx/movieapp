@@ -4,6 +4,7 @@ import { MOVIES } from "../data/movies";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
 import { useProfile } from "../context/ProfileContext";
+import { byReleaseDesc } from "../data/movieDetails";
 import styles from "../css/pages/MovieBrowsePage.module.css";
 
 const GENRES = [
@@ -156,7 +157,7 @@ export default function MovieBrowsePage({ user, onToast }) {
     if (sort === "score") result.sort((a, b) => b.score - a.score);
     if (sort === "newest") result.sort((a, b) => b.year - a.year);
     if (sort === "reviews") result.sort((a, b) => b.reviews - a.reviews);
-    if (sort === "upcoming") result.reverse();
+    if (sort === "upcoming") result.sort(byReleaseDesc);
 
     return result;
   }, [genre, year, customYear, showCustom, scoreRange, sort, search]);

@@ -12,6 +12,10 @@ export const MOVIE_DETAILS = {
   ghostbuster: { releaseDate: '2024-03-22', rated: 'PG-13', language: 'อังกฤษ', country: 'สหรัฐอเมริกา', studio: 'Columbia Pictures' },
 }
 
+// เรียงหนังตามวันเข้าฉาย ใหม่สุดก่อน (ใช้กับโซน/ตัวเรียง "เร็วๆ นี้" จนกว่าจะมีหนังที่ยังไม่เข้าฉายในข้อมูล)
+export const byReleaseDesc = (a, b) =>
+  (MOVIE_DETAILS[b.id]?.releaseDate ?? '').localeCompare(MOVIE_DETAILS[a.id]?.releaseDate ?? '')
+
 const REVIEWERS = [
   { name: 'มินตรา ดูหนังทุกวัน', color: '#00B4D8' },
   { name: 'ต้นกล้า CineClub', color: '#2ECC71' },

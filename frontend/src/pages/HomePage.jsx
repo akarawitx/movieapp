@@ -7,6 +7,7 @@ import GenreTabs from "../components/GenreTabs";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
 import { useProfile } from "../context/ProfileContext";
+import { byReleaseDesc } from "../data/movieDetails";
 import styles from "../css/pages/HomePage.module.css";
 
 function SectionHeader({ title, onViewAll }) {
@@ -70,7 +71,7 @@ export default function HomePage({ user, onToast }) {
       : MOVIES.filter((m) => m.genre === activeGenre);
 
   const topRated = [...MOVIES].sort((a, b) => b.score - a.score);
-  const upcoming = [...MOVIES].reverse();
+  const upcoming = [...MOVIES].sort(byReleaseDesc);
   const heroMovie = MOVIES[0];
   const featuredMovie = MOVIES.find((m) => m.id === FEATURED_REVIEW.movieId);
 
@@ -88,7 +89,7 @@ export default function HomePage({ user, onToast }) {
       {/* Hero - เต็มความกว้าง */}
       <HeroBanner
         movie={heroMovie}
-        onOpen={setSelectedMovie}
+        onOpen={(m) => navigate(`/movies/${m.id}#reviews`)}
         onWatchlist={handleWatchlist}
       />
 
