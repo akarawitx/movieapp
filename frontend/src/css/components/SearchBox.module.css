@@ -1,0 +1,182 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px 0 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  color: var(--text-dim);
+  transition: var(--transition);
+}
+
+.field:focus-within {
+  background: var(--dark2);
+  border-color: rgba(245, 197, 24, 0.5);
+  color: var(--gold);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: "Prompt", sans-serif;
+  font-size: 13.5px;
+}
+
+.input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ซ่อนปุ่ม x ของเบราว์เซอร์ ใช้ปุ่มของเราแทน */
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.clear {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
+  color: #aaa;
+  cursor: pointer;
+}
+
+.clear:hover {
+  color: #fff;
+}
+
+@keyframes panelIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  min-width: 300px;
+  background: var(--dark3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  overflow: hidden;
+  z-index: 960;
+  animation: panelIn 0.14s ease-out;
+}
+
+.list {
+  list-style: none;
+  padding: 6px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.optionActive {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.thumb {
+  width: 34px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 5px;
+  background: var(--dark5);
+  flex-shrink: 0;
+}
+
+.optionText {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.optionTitle {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #eee;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.optionMeta {
+  font-size: 12px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.optionScore {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.mark {
+  background: none;
+  color: var(--gold);
+}
+
+.none {
+  padding: 18px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.all {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  background: var(--dark2);
+  border: none;
+  border-top: 1px solid var(--border);
+  color: var(--gold);
+  font-family: "Prompt", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.all:hover {
+  background: var(--dark4);
+}
+
+.all kbd {
+  margin-left: auto;
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--text-dim);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  padding: 0 6px;
+}

@@ -58,19 +58,14 @@ function MovieRow({ movies, onOpen, onWatchlist }) {
   );
 }
 
-export default function HomePage({ user, onToast, searchQuery }) {
+export default function HomePage({ user, onToast }) {
   const navigate = useNavigate();
   const [activeGenre, setActiveGenre] = useState("all");
   const [selectedMovie, setSelectedMovie] = useState(null);
   const { addToWatchlist } = useProfile();
 
-  const filtered = searchQuery
-    ? MOVIES.filter(
-        (m) =>
-          m.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          m.genreLabel.includes(searchQuery),
-      )
-    : activeGenre === "all"
+  const filtered =
+    activeGenre === "all"
       ? MOVIES
       : MOVIES.filter((m) => m.genre === activeGenre);
 

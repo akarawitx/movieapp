@@ -12,13 +12,13 @@ import SettingsPage from "./pages/SettingsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import MovieDetailPage from "./pages/MovieDetailPage";
 import WatchlistPage from "./pages/WatchlistPage";
+import SearchPage from "./pages/SearchPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
 import styles from './css/App.module.css'
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [searchQuery, setSearch] = useState("");
   const [toast, setToast] = useState({ show: false, icon: "", msg: "" });
 
   const showToast = (msg, icon = "✅") => setToast({ show: true, icon, msg });
@@ -32,17 +32,13 @@ export default function App() {
   return (
     <ProfileProvider user={user} onUserChange={setUser}>
       <div className={styles.app}>
-        <Header user={user} onLogin={setUser} onSearch={setSearch} />
+        <Header user={user} onLogin={setUser} />
         <main>
           <Routes>
             <Route
               path="/"
               element={
-                <HomePage
-                  user={user}
-                  onToast={showToast}
-                  searchQuery={searchQuery}
-                />
+                <HomePage user={user} onToast={showToast} />
               }
             />
             <Route
@@ -53,6 +49,12 @@ export default function App() {
                   user={user}
                   onToast={showToast}
                 />
+              }
+            />
+            <Route
+              path="/search"
+              element={
+                <SearchPage key={search} user={user} onToast={showToast} />
               }
             />
             <Route

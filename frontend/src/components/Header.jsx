@@ -1,6 +1,9 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import UserMenu from "./UserMenu";
+import SearchBox from "./SearchBox";
+import MobileMenu from "./MobileMenu";
+import Icon from "./Icon";
 import { useProfile } from "../context/ProfileContext";
 import styles from "../css/components/Header.module.css";
 
@@ -84,6 +87,9 @@ export default function Header({ user, onLogin }) {
   const { profile } = useProfile();
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
   const [loginForm, setLoginForm] = useState({ username: "", password: "" });
   const [regForm, setRegForm] = useState({
     username: "",
@@ -161,8 +167,21 @@ export default function Header({ user, onLogin }) {
           ))}
         </div>
 
+        {/* Search (desktop) — key ทำให้คำค้นตรงกับ URL เมื่ออยู่หน้า /search */}
+        <div className={styles.search}>
+          <SearchBox key={pathname === "/search" ? location.search : "search"} />
+        </div>
+
         {/* Auth */}
         <div className={styles.auth}>
+          <button
+            className={styles.iconBtn}
+            onClick={() => setSearchOpen((o) => !o)}
+            aria-label="ค้นหา"
+            aria-expanded={searchOpen}
+          >
+            <Icon name={searchOpen ? "close" : "search"} size={20} />
+          </button>
           {!user || !profile ? (
             <>
               <button
@@ -181,8 +200,38 @@ export default function Header({ user, onLogin }) {
           ) : (
             <UserMenu profile={profile} onLogout={handleLogout} />
           )}
+          <button
+            className={`${styles.iconBtn} ${styles.menuBtn}`}
+            onClick={() => setMenuOpen(true)}
+            aria-label="เปิดเมนู"
+            aria-expanded={menuOpen}
+          >
+            <Icon name="menu" size={22} />
+          </button>
         </div>
       </nav>
+
+      {/* Search (mobile) */}
+      {searchOpen && (
+        <div className={styles.mobileSearch}>
+          <SearchBox
+            key={pathname === "/search" ? location.search : "search"}
+            autoFocus
+            onDone={() => setSearchOpen(false)}
+          />
+        </div>
+      )}
+
+      <MobileMenu
+        open={menuOpen}
+        onClose={closeMenu}
+        navItems={NAV_ITEMS}
+        pathname={pathname}
+        profile={user ? profile : null}
+        onLogin={() => setLoginOpen(true)}
+        onRegister={() => setRegisterOpen(true)}
+        onLogout={handleLogout}
+      />
 
       {/* Login Modal */}
       <Modal
