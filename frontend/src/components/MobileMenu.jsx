@@ -10,7 +10,7 @@ const ACCOUNT_LINKS = [
   { label: "ตั้งค่า", path: "/settings/profile", icon: "settings" },
 ];
 
-// เมนูแบบ drawer สำหรับจอเล็ก (<900px)
+// เมนูแบบ drawer สำหรับจอเล็ก (≤1000px)
 export default function MobileMenu({
   open,
   onClose,

@@ -13,6 +13,8 @@ import NotFoundPage from "./pages/NotFoundPage";
 import MovieDetailPage from "./pages/MovieDetailPage";
 import WatchlistPage from "./pages/WatchlistPage";
 import SearchPage from "./pages/SearchPage";
+import ChartsPage from "./pages/ChartsPage";
+import CalendarPage from "./pages/CalendarPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
 import { load, save } from "./utils/storage";
@@ -59,6 +61,14 @@ export default function App() {
                   onToast={showToast}
                 />
               }
+            />
+            <Route
+              path="/charts"
+              element={<ChartsPage user={user} onToast={showToast} />}
+            />
+            <Route
+              path="/calendar"
+              element={<CalendarPage user={user} onToast={showToast} />}
             />
             <Route
               path="/search"

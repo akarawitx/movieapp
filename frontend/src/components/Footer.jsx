@@ -50,8 +50,8 @@ export default function Footer() {
       title: "บริการ",
       links: [
         { label: "รีวิวหนัง" },
-        { label: "Top Charts", to: "/movies?sort=score" },
-        { label: "ปฏิทินฉาย", to: "/movies?sort=upcoming" },
+        { label: "Top Charts", to: "/charts" },
+        { label: "ปฏิทินฉาย", to: "/calendar" },
         { label: "รายการอยากดู", to: "/watchlist" },
       ],
     },

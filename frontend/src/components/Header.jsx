@@ -11,6 +11,7 @@ const PROTECTED_PATHS = ["/profile", "/settings", "/watchlist"];
 
 const NAV_ITEMS = [
   { label: "รายการหนังทั้งหมด", path: "/movies" },
+  { label: "Top Charts", path: "/charts" },
   { label: "เกี่ยวกับเรา", path: "/about" },
   { label: "ติดต่อเรา", path: "/contact" },
 ];

@@ -202,8 +202,8 @@ export default function WatchlistPage({ onToast }) {
   const progress = items.length ? Math.round((watchedCount / items.length) * 100) : 0;
 
   const genres = [
-    ...new Map(items.map(({ movie }) => [movie.genre, movie.genreLabel])).entries(),
-  ];
+    ...new Set(items.map(({ movie }) => movie.genreLabel)),
+  ].map((label) => [label, label]);
 
   const counts = {
     all: items.length,
@@ -223,7 +223,7 @@ export default function WatchlistPage({ onToast }) {
     .filter(({ movie }) =>
       status === "all" ? true : (status === "watched") === isWatched(movie.id)
     )
-    .filter(({ movie }) => genre === "all" || movie.genre === genre)
+    .filter(({ movie }) => genre === "all" || movie.genreLabel === genre)
     .sort(sorter);
 
   const suggestions = [...MOVIES]

@@ -36,10 +36,10 @@ export default function SearchPage({ user, onToast }) {
 
   const movies = searchMovies(query);
   const reviews = searchReviews(query);
-  const genres = [...new Map(movies.map((m) => [m.genre, m.genreLabel])).entries()];
+  const genres = [...new Set(movies.map((m) => m.genreLabel))].map((label) => [label, label]);
 
   const shownMovies = movies
-    .filter((m) => genre === "all" || m.genre === genre)
+    .filter((m) => genre === "all" || m.genreLabel === genre)
     .sort(
       {
         relevance: () => 0,
