@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useProfile } from '../context/ProfileContext'
 import { getMovieReviews } from '../data/movieDetails'
 import useLoginPrompt from '../hooks/useLoginPrompt'
+import Poster from './Poster'
 import styles from '../css/components/MovieDetailModal.module.css'
 
 // ดูแบบย่อ (quick view) — รายละเอียดเต็มและการเขียนรีวิวอยู่ที่หน้า /movies/:id
@@ -49,7 +50,7 @@ export default function MovieDetailModal({ movie, user, onClose, onToast }) {
           {/* Info Grid */}
           <div className={styles.infoGrid}>
             <div className={styles.posterBox}>
-              <img className={styles.posterImg} src={movie.poster} alt={movie.title} />
+              <Poster src={movie.poster} title={movie.title} imgClassName={styles.posterImg} />
             </div>
             <div className={styles.infoText}>
               <div className={styles.title}>{movie.title}</div>

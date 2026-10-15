@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -27,6 +27,10 @@ export default function App() {
   const [toast, setToast] = useState({ show: false, icon: "", msg: "" });
 
   const showToast = (msg, icon = "✅") => setToast({ show: true, icon, msg });
+  const hideToast = useCallback(
+    () => setToast((t) => ({ ...t, show: false })),
+    [],
+  );
 
   // เลื่อนขึ้นบนสุดทุกครั้งที่เปลี่ยนหน้า
   const { pathname, search } = useLocation();
@@ -99,7 +103,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
-        <Toast toast={toast} onHide={() => setToast({ ...toast, show: false })} />
+        <Toast toast={toast} onHide={hideToast} />
       </div>
     </ProfileProvider>
   );

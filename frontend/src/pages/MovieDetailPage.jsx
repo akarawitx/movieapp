@@ -7,6 +7,7 @@ import useLoginPrompt from "../hooks/useLoginPrompt";
 import MovieCard from "../components/MovieCard";
 import ReviewSection from "../components/movie/ReviewSection";
 import Icon from "../components/Icon";
+import Poster from "../components/Poster";
 import NotFoundPage from "./NotFoundPage";
 import styles from "../css/pages/MovieDetailPage.module.css";
 
@@ -161,7 +162,7 @@ export default function MovieDetailPage({ user, onToast }) {
 
           <div className={styles.heroGrid}>
             <div className={styles.poster}>
-              <img src={movie.poster} alt={`โปสเตอร์ ${movie.title}`} />
+              <Poster src={movie.poster} title={movie.title} alt={`โปสเตอร์ ${movie.title}`} />
             </div>
 
             <div className={styles.heroInfo}>

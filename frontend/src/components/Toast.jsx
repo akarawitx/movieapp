@@ -6,7 +6,8 @@ export default function Toast({ toast, onHide }) {
     if (!toast.show) return
     const t = setTimeout(onHide, 3000)
     return () => clearTimeout(t)
-  }, [toast.show])
+    // ขึ้นกับ toast ทั้งก้อน: toast ใหม่ระหว่างที่อันเดิมยังแสดง จะเริ่มนับเวลาใหม่
+  }, [toast, onHide])
 
   return (
     <div className={`${styles.toast} ${toast.show ? styles.show : ''}`}>

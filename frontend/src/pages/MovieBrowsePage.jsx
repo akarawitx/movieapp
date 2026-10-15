@@ -103,6 +103,16 @@ export default function MovieBrowsePage({ user, onToast }) {
   const [searchParams] = useSearchParams();
   const yearDropdownRef = useRef(null);
 
+  const initGenre = searchParams.get("genre");
+  const [genre, setGenre] = useState(
+    GENRES.some((g) => g.id === initGenre) ? initGenre : "all",
+  );
+  const [year, setYear] = useState("all");
+  const [customYear, setCustomYear] = useState("");
+  const [showCustom, setShowCustom] = useState(false);
+  const [yearOpen, setYearOpen] = useState(false);
+
+  // ปิด dropdown ปีเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClick = (e) => {
       if (
@@ -115,15 +125,6 @@ export default function MovieBrowsePage({ user, onToast }) {
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
-
-  const initGenre = searchParams.get("genre");
-  const [genre, setGenre] = useState(
-    GENRES.some((g) => g.id === initGenre) ? initGenre : "all",
-  );
-  const [year, setYear] = useState("all");
-  const [customYear, setCustomYear] = useState("");
-  const [showCustom, setShowCustom] = useState(false);
-  const [yearOpen, setYearOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [scoreRange, setScoreRange] = useState([0, 10]);
   const initSort = searchParams.get("sort");

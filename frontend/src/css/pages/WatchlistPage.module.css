@@ -297,25 +297,6 @@
   transform: scale(1.04);
 }
 
-.posterFallback {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 12px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-dim);
-}
-
-.cardPoster img,
-.rowPoster img,
-.suggestPoster img {
-  position: relative;
-}
-
 .isWatched .cardPoster img,
 .isWatched .rowPoster img {
   filter: grayscale(0.6) brightness(0.55);

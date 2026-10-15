@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { MOVIES } from "../data/movies";
 import { useProfile } from "../context/ProfileContext";
 import Icon from "../components/Icon";
+import Poster from "../components/Poster";
 import styles from "../css/pages/WatchlistPage.module.css";
 
 const STATUS_TABS = [
@@ -21,23 +22,6 @@ const SORTS = [
 
 const VIEW_KEY = "pixelfilm.watchlist.view";
 
-// รูปโปสเตอร์โหลดไม่ได้ → ซ่อนรูปแล้วแสดงชื่อเรื่องบนพื้นเทาแทน
-function Poster({ movie }) {
-  return (
-    <>
-      <span className={styles.posterFallback}>{movie.title}</span>
-      <img
-        src={movie.poster}
-        alt={movie.title}
-        onError={(e) => {
-          e.currentTarget.style.display = "none";
-        }}
-      />
-    </>
-  );
-}
-
-// "2h 46m" → 166
 const toMinutes = (duration) => {
   const h = /(\d+)h/.exec(duration)?.[1] ?? 0;
   const m = /(\d+)m/.exec(duration)?.[1] ?? 0;
@@ -78,7 +62,7 @@ function EmptyWatchlist({ suggestions, onAdd }) {
             {suggestions.map((m) => (
               <div key={m.id} className={styles.suggestCard}>
                 <Link to={`/movies/${m.id}`} className={styles.suggestPoster}>
-                  <Poster movie={m} />
+                  <Poster src={m.poster} title={m.title} />
                   <span className={styles.scoreBadge}>★ {m.score}</span>
                 </Link>
                 <div className={styles.suggestTitle}>{m.title}</div>
@@ -129,7 +113,7 @@ function WatchlistItem({ movie, view, watched, reviewed, onToggleWatched, onRemo
     return (
       <article className={`${styles.row} ${watched ? styles.isWatched : ""}`}>
         <Link to={detailUrl} className={styles.rowPoster}>
-          <Poster movie={movie} />
+          <Poster src={movie.poster} title={movie.title} />
           {watched && <span className={styles.watchedTag}>✓ ดูแล้ว</span>}
         </Link>
         <div className={styles.rowBody}>
@@ -156,7 +140,7 @@ function WatchlistItem({ movie, view, watched, reviewed, onToggleWatched, onRemo
   return (
     <article className={`${styles.card} ${watched ? styles.isWatched : ""}`}>
       <Link to={detailUrl} className={styles.cardPoster}>
-        <Poster movie={movie} />
+        <Poster src={movie.poster} title={movie.title} />
         <span className={styles.scoreBadge}>★ {movie.score}</span>
         {watched && <span className={styles.watchedTag}>✓ ดูแล้ว</span>}
       </Link>
