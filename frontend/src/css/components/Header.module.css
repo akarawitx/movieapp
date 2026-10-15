@@ -107,26 +107,6 @@
   background: var(--gold-dark);
 }
 
-.avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f5c518, #ff6b35);
-  border: 2px solid transparent;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 12px;
-  color: #000;
-  font-family: "Prompt", sans-serif;
-}
-
-.avatar:hover {
-  border-color: var(--gold);
-}
-
 /* ═════════ Modal ═════════ */
 @keyframes modalIn {
   from {
@@ -264,74 +244,4 @@
   color: var(--gold);
   cursor: pointer;
   font-weight: 600;
-}
-
-/* ── Profile modal ── */
-.profileHead {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.profileAvatar {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #f5c518, #ff6b35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 22px;
-  color: #000;
-  margin: 0 auto 10px;
-}
-
-.profileName {
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-}
-
-.profileRole {
-  color: #666;
-  font-size: 12px;
-  margin-top: 3px;
-}
-
-.statsGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 18px;
-}
-
-.statBox {
-  background: var(--dark2);
-  border-radius: 8px;
-  padding: 12px 8px;
-  text-align: center;
-}
-
-.statValue {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--gold);
-}
-
-.statLabel {
-  font-size: 11px;
-  color: #666;
-}
-
-.logoutBtn {
-  width: 100%;
-  background: rgba(229, 9, 20, 0.1);
-  color: #ff6b6b;
-  border: 1px solid rgba(229, 9, 20, 0.18);
-  padding: 11px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: "Prompt", sans-serif;
 }

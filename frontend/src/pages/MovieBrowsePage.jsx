@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { MOVIES } from "../data/movies";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
+import { useProfile } from "../context/ProfileContext";
 import styles from "../css/pages/MovieBrowsePage.module.css";
 
 const GENRES = [
@@ -130,6 +131,7 @@ export default function MovieBrowsePage({ user, onToast }) {
     SORTS.some((s) => s.id === initSort) ? initSort : "score",
   );
   const [selected, setSelected] = useState(null);
+  const { addToWatchlist } = useProfile();
 
   const filtered = useMemo(() => {
     let result = [...MOVIES];
@@ -163,6 +165,7 @@ export default function MovieBrowsePage({ user, onToast }) {
       onToast("กรุณาเข้าสู่ระบบก่อน");
       return;
     }
+    addToWatchlist(movie.id);
     onToast(`เพิ่ม "${movie.title}" ในรายการแล้ว`);
   };
 

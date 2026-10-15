@@ -6,6 +6,7 @@ import StatsBar from "../components/StatsBar";
 import GenreTabs from "../components/GenreTabs";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
+import { useProfile } from "../context/ProfileContext";
 import styles from "../css/pages/HomePage.module.css";
 
 function SectionHeader({ title, onViewAll }) {
@@ -61,6 +62,7 @@ export default function HomePage({ user, onToast, searchQuery }) {
   const navigate = useNavigate();
   const [activeGenre, setActiveGenre] = useState("all");
   const [selectedMovie, setSelectedMovie] = useState(null);
+  const { addToWatchlist } = useProfile();
 
   const filtered = searchQuery
     ? MOVIES.filter(
@@ -82,6 +84,7 @@ export default function HomePage({ user, onToast, searchQuery }) {
       onToast("กรุณาเข้าสู่ระบบก่อน");
       return;
     }
+    addToWatchlist(movie.id);
     onToast(`เพิ่ม "${movie.title}" ในรายการแล้ว`);
   };
 
@@ -179,7 +182,15 @@ export default function HomePage({ user, onToast, searchQuery }) {
               <div className={styles.featuredActions}>
                 {[`❤ ${FEATURED_REVIEW.likes}`, "ความคิดเห็น", "อ่านต่อ →"].map(
                   (btn) => (
-                    <button key={btn} className={styles.chip}>
+                    <button
+                      key={btn}
+                      className={styles.chip}
+                      onClick={
+                        btn === "อ่านต่อ →"
+                          ? () => navigate(`/movies/${FEATURED_REVIEW.movieId}`)
+                          : undefined
+                      }
+                    >
                       {btn}
                     </button>
                   ),

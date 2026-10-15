@@ -1,6 +1,10 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import UserMenu from "./UserMenu";
+import { useProfile } from "../context/ProfileContext";
 import styles from "../css/components/Header.module.css";
+
+const PROTECTED_PATHS = ["/profile", "/settings"];
 
 const NAV_ITEMS = [
   { label: "รายการหนังทั้งหมด", path: "/movies" },
@@ -75,41 +79,53 @@ function Field({ label, type = "text", placeholder, value, onChange }) {
 
 export default function Header({ user, onLogin }) {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const location = useLocation();
+  const { pathname } = location;
+  const { profile } = useProfile();
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: "", password: "" });
   const [regForm, setRegForm] = useState({
     username: "",
     email: "",
     password: "",
   });
-  const [currentUser, setCurrentUser] = useState(user || null);
+
+  // ถูกพามาจากหน้าที่ต้องล็อกอิน (ProtectedRoute) → เปิดหน้าต่าง Login ให้อัตโนมัติ
+  const loginRedirect = location.state?.requireLogin ? location.state : null;
+  const [handledKey, setHandledKey] = useState(null);
+  if (loginRedirect && !user && handledKey !== location.key) {
+    setHandledKey(location.key);
+    setLoginOpen(true);
+  }
+
+  const clearLoginRedirect = () => {
+    if (loginRedirect) navigate(pathname, { replace: true, state: null });
+  };
+
+  const completeAuth = (username) => {
+    onLogin?.(username);
+    if (loginRedirect?.from) navigate(loginRedirect.from, { replace: true });
+  };
 
   const handleLogin = () => {
     if (!loginForm.username || !loginForm.password) return;
-    setCurrentUser(loginForm.username);
-    onLogin?.(loginForm.username);
+    completeAuth(loginForm.username);
     setLoginOpen(false);
     setLoginForm({ username: "", password: "" });
   };
 
   const handleRegister = () => {
     if (!regForm.username || !regForm.email || !regForm.password) return;
-    setCurrentUser(regForm.username);
-    onLogin?.(regForm.username);
+    completeAuth(regForm.username);
     setRegisterOpen(false);
     setRegForm({ username: "", email: "", password: "" });
   };
 
   const handleLogout = () => {
-    setCurrentUser(null);
+    if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) navigate("/");
     onLogin?.(null);
-    setProfileOpen(false);
   };
-
-  const initials = currentUser?.substring(0, 2).toUpperCase() || "U";
 
   const modalLogo = (sub) => (
     <div className={styles.modalLogo}>
@@ -147,7 +163,7 @@ export default function Header({ user, onLogin }) {
 
         {/* Auth */}
         <div className={styles.auth}>
-          {!currentUser ? (
+          {!user || !profile ? (
             <>
               <button
                 className={styles.btnLogin}
@@ -163,19 +179,24 @@ export default function Header({ user, onLogin }) {
               </button>
             </>
           ) : (
-            <button
-              className={styles.avatar}
-              onClick={() => setProfileOpen(true)}
-            >
-              {initials}
-            </button>
+            <UserMenu profile={profile} onLogout={handleLogout} />
           )}
         </div>
       </nav>
 
       {/* Login Modal */}
-      <Modal isOpen={loginOpen} onClose={() => setLoginOpen(false)}>
-        {modalLogo("เข้าสู่ระบบเพื่อรีวิวหนังและบันทึกรายการโปรด")}
+      <Modal
+        isOpen={loginOpen}
+        onClose={() => {
+          setLoginOpen(false);
+          clearLoginRedirect();
+        }}
+      >
+        {modalLogo(
+          loginRedirect
+            ? loginRedirect.message || "กรุณาเข้าสู่ระบบก่อนเข้าใช้งานหน้านี้"
+            : "เข้าสู่ระบบเพื่อรีวิวหนังและบันทึกรายการโปรด"
+        )}
         <Field
           label="ชื่อผู้ใช้"
           placeholder="กรอกชื่อผู้ใช้"
@@ -250,29 +271,6 @@ export default function Header({ user, onLogin }) {
         </p>
       </Modal>
 
-      {/* Profile Modal */}
-      <Modal isOpen={profileOpen} onClose={() => setProfileOpen(false)}>
-        <div className={styles.profileHead}>
-          <div className={styles.profileAvatar}>{initials}</div>
-          <div className={styles.profileName}>{currentUser}</div>
-          <div className={styles.profileRole}>สมาชิก PixelFilm</div>
-        </div>
-        <div className={styles.statsGrid}>
-          {[
-            { label: "รีวิว", value: "0" },
-            { label: "รายการ", value: "0" },
-            { label: "Likes", value: "0" },
-          ].map((s) => (
-            <div key={s.label} className={styles.statBox}>
-              <div className={styles.statValue}>{s.value}</div>
-              <div className={styles.statLabel}>{s.label}</div>
-            </div>
-          ))}
-        </div>
-        <button className={styles.logoutBtn} onClick={handleLogout}>
-          ออกจากระบบ
-        </button>
-      </Modal>
     </>
   );
 }

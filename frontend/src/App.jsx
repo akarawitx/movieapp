@@ -7,6 +7,12 @@ import HomePage from "./pages/HomePage";
 import MovieBrowsePage from "./pages/MovieBrowsePage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import MovieDetailPage from "./pages/MovieDetailPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+import { ProfileProvider } from "./context/ProfileContext";
 import styles from './css/App.module.css'
 
 export default function App() {
@@ -23,33 +29,56 @@ export default function App() {
   }, [pathname]);
 
   return (
-    <div className={styles.app}>
-      <Header user={user} onLogin={setUser} onSearch={setSearch} />
-      <main>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomePage
-                user={user}
-                onToast={showToast}
-                searchQuery={searchQuery}
-              />
-            }
-          />
-          <Route
-            path="/movies"
-            element={<MovieBrowsePage user={user} onToast={showToast} />}
-          />
-          <Route path="/about" element={<AboutPage />} />
-          <Route
-            path="/contact"
-            element={<ContactPage onToast={showToast} />}
-          />
-        </Routes>
-      </main>
-      <Footer />
-      <Toast toast={toast} onHide={() => setToast({ ...toast, show: false })} />
-    </div>
+    <ProfileProvider user={user} onUserChange={setUser}>
+      <div className={styles.app}>
+        <Header user={user} onLogin={setUser} onSearch={setSearch} />
+        <main>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomePage
+                  user={user}
+                  onToast={showToast}
+                  searchQuery={searchQuery}
+                />
+              }
+            />
+            <Route
+              path="/movies"
+              element={<MovieBrowsePage user={user} onToast={showToast} />}
+            />
+            <Route
+              path="/movies/:id"
+              element={<MovieDetailPage user={user} onToast={showToast} />}
+            />
+            <Route path="/about" element={<AboutPage />} />
+            <Route
+              path="/contact"
+              element={<ContactPage onToast={showToast} />}
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute user={user}>
+                  <ProfilePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings/:section?"
+              element={
+                <ProtectedRoute user={user}>
+                  <SettingsPage onToast={showToast} />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </main>
+        <Footer />
+        <Toast toast={toast} onHide={() => setToast({ ...toast, show: false })} />
+      </div>
+    </ProfileProvider>
   );
 }
