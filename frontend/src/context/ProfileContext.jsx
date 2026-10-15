@@ -1,37 +1,56 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import { createMockProfile, MOCK_ACTIVITY } from '../data/profile'
+import { load, save } from '../utils/storage'
 
 const ProfileContext = createContext(null)
 
-// เก็บโปรไฟล์จำลองแยกตาม username ใน state (ล็อกอินชื่อเดิมซ้ำจะยังเห็นข้อมูลที่แก้ไว้)
+// ย้ายข้อมูลจาก key เดิมไป key ใหม่ (ใช้ตอนเปลี่ยน username)
+const moveKey = (obj, from, to, value) => {
+  const copy = { ...obj }
+  delete copy[from]
+  if (value !== undefined) copy[to] = value
+  return copy
+}
+
+// โปรไฟล์และกิจกรรม (watchlist, รีวิว ฯลฯ) เก็บแยกตาม username และบันทึกลง localStorage
 export function ProfileProvider({ user, onUserChange, children }) {
-  const [profiles, setProfiles] = useState({})
-  const [activity, setActivity] = useState(MOCK_ACTIVITY)
+  const [profiles, setProfiles] = useState(() => load('profiles', {}))
+  const [activities, setActivities] = useState(() => load('activities', {}))
+
+  useEffect(() => {
+    save('profiles', profiles)
+  }, [profiles])
+
+  useEffect(() => {
+    save('activities', activities)
+  }, [activities])
 
   const profile = user ? profiles[user] ?? createMockProfile(user) : null
+  // ข้อมูลที่บันทึกจากเวอร์ชันเก่าอาจไม่มีบาง field → เติมจากค่าตั้งต้น
+  const activity = { ...MOCK_ACTIVITY, ...(user ? activities[user] : null) }
+
+  const setActivity = (update) =>
+    setActivities((prev) => ({
+      ...prev,
+      [user]: update({ ...MOCK_ACTIVITY, ...prev[user] }),
+    }))
 
   const updateProfile = (patch) => {
     if (!user) return
     const next = { ...profile, ...patch }
-    setProfiles((prev) => {
-      const copy = { ...prev }
-      delete copy[user]
-      copy[next.username] = next
-      return copy
-    })
-    if (next.username !== user) onUserChange(next.username)
+    setProfiles((prev) => moveKey(prev, user, next.username, next))
+    if (next.username !== user) {
+      setActivities((prev) => moveKey(prev, user, next.username, prev[user]))
+      onUserChange(next.username)
+    }
   }
 
   const setAvatar = (dataUrl) => updateProfile({ avatar: dataUrl })
   const removeAvatar = () => updateProfile({ avatar: null })
 
   const deleteAccount = () => {
-    setProfiles((prev) => {
-      const copy = { ...prev }
-      delete copy[user]
-      return copy
-    })
-    setActivity(MOCK_ACTIVITY)
+    setProfiles((prev) => moveKey(prev, user))
+    setActivities((prev) => moveKey(prev, user))
     onUserChange(null)
   }
 

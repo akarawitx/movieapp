@@ -15,10 +15,15 @@ import WatchlistPage from "./pages/WatchlistPage";
 import SearchPage from "./pages/SearchPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
+import { load, save } from "./utils/storage";
 import styles from './css/App.module.css'
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  // จำผู้ใช้ที่ล็อกอินไว้ข้ามการรีเฟรช (ระบบล็อกอินจำลอง ยังไม่ต่อ API)
+  const [user, setUser] = useState(() => load("user", null));
+  useEffect(() => {
+    save("user", user);
+  }, [user]);
   const [toast, setToast] = useState({ show: false, icon: "", msg: "" });
 
   const showToast = (msg, icon = "✅") => setToast({ show: true, icon, msg });

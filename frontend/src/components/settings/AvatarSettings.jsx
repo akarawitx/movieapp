@@ -6,6 +6,40 @@ import styles from "../../css/components/settings/Settings.module.css";
 
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 const MAX_SIZE = 2 * 1024 * 1024;
+const OUTPUT_SIZE = 320;
+
+// ครอปตรงกลางเป็นสี่เหลี่ยมจัตุรัสแล้วย่อเหลือ 320px ให้ไฟล์เล็กพอเก็บใน localStorage
+function resizeToSquare(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const side = Math.min(img.width, img.height);
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = OUTPUT_SIZE;
+      canvas
+        .getContext("2d")
+        .drawImage(
+          img,
+          (img.width - side) / 2,
+          (img.height - side) / 2,
+          side,
+          side,
+          0,
+          0,
+          OUTPUT_SIZE,
+          OUTPUT_SIZE
+        );
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/jpeg", 0.88));
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("decode failed"));
+    };
+    img.src = url;
+  });
+}
 
 export default function AvatarSettings({ onToast }) {
   const { profile, setAvatar, removeAvatar } = useProfile();
@@ -25,13 +59,13 @@ export default function AvatarSettings({ onToast }) {
       setError("ไฟล์ต้องมีขนาดไม่เกิน 2MB");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPreview(reader.result);
-      setError("");
-      setConfirmRemove(false);
-    };
-    reader.readAsDataURL(file);
+    resizeToSquare(file)
+      .then((dataUrl) => {
+        setPreview(dataUrl);
+        setError("");
+        setConfirmRemove(false);
+      })
+      .catch(() => setError("ไม่สามารถอ่านไฟล์รูปนี้ได้ ลองใช้รูปอื่น"));
   };
 
   const openPicker = () => inputRef.current?.click();
@@ -52,7 +86,7 @@ export default function AvatarSettings({ onToast }) {
     <section className={styles.section}>
       <h2 className={styles.title}>รูปโปรไฟล์</h2>
       <p className={styles.desc}>
-        แนะนำรูปสี่เหลี่ยมจัตุรัส ขนาดอย่างน้อย 400×400px (JPG, PNG, WEBP ไม่เกิน 2MB)
+        รองรับ JPG, PNG, WEBP ไม่เกิน 2MB ระบบจะครอปตรงกลางเป็นสี่เหลี่ยมจัตุรัสให้อัตโนมัติ
       </p>
 
       <div className={styles.avatarRow}>
