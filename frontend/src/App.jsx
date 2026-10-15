@@ -17,6 +17,8 @@ import ChartsPage from "./pages/ChartsPage";
 import CalendarPage from "./pages/CalendarPage";
 import ReviewsFeedPage from "./pages/ReviewsFeedPage";
 import PublicProfilePage from "./pages/PublicProfilePage";
+import { PrivacyPage, TermsPage } from "./pages/LegalPages";
+import { ForgotPasswordPage, ResetPasswordPage } from "./pages/PasswordRecoveryPages";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { ProfileProvider } from "./context/ProfileContext";
 import { load, save } from "./utils/storage";
@@ -69,6 +71,10 @@ export default function App() {
               element={<ChartsPage user={user} onToast={showToast} />}
             />
             <Route path="/reviews" element={<ReviewsFeedPage user={user} />} />
+            <Route path="/privacy" element={<PrivacyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/u/:username" element={<PublicProfilePage user={user} />} />
             <Route
               path="/calendar"

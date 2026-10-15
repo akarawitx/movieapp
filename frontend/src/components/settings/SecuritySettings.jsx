@@ -1,25 +1,10 @@
 import { useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
 import Icon from "../Icon";
+import PasswordStrength from "../PasswordStrength";
 import styles from "../../css/components/settings/Settings.module.css";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const STRENGTH = [
-  { label: "อ่อนมาก", color: "#e50914" },
-  { label: "อ่อน", color: "#ff6b35" },
-  { label: "ปานกลาง", color: "#f5c518" },
-  { label: "แข็งแรง", color: "#2ecc71" },
-];
-
-function passwordScore(pw) {
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
-  if (/\d/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  return Math.max(score, 1) - 1;
-}
 
 function PasswordInput({ id, label, value, onChange, error, autoComplete }) {
   const [show, setShow] = useState(false);
@@ -102,7 +87,6 @@ function PasswordForm({ onToast }) {
   const [errors, setErrors] = useState({});
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
 
-  const level = passwordScore(form.next);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -143,21 +127,7 @@ function PasswordForm({ onToast }) {
             error={errors.next}
             autoComplete="new-password"
           />
-          {form.next && (
-            <div style={{ marginTop: -8, marginBottom: 16 }}>
-              <div className={styles.strength}>
-                {STRENGTH.map((s, i) => (
-                  <span
-                    key={s.label}
-                    style={i <= level ? { background: STRENGTH[level].color } : undefined}
-                  />
-                ))}
-              </div>
-              <p className={styles.strengthLabel} style={{ color: STRENGTH[level].color }}>
-                ความแข็งแรง: {STRENGTH[level].label}
-              </p>
-            </div>
-          )}
+          <PasswordStrength password={form.next} />
         </div>
         <PasswordInput
           id="pw-confirm"

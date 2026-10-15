@@ -129,6 +129,13 @@ export default function Header({ user, onLogin }) {
     setRegForm({ username: "", email: "", password: "" });
   };
 
+  // ปิดหน้าต่าง Login/สมัคร แล้วไปหน้าอื่น (ลืมรหัสผ่าน, เงื่อนไข, นโยบาย)
+  const leaveModalTo = (path) => {
+    setLoginOpen(false);
+    setRegisterOpen(false);
+    navigate(path);
+  };
+
   const handleLogout = () => {
     if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) navigate("/");
     onLogin?.(null);
@@ -264,6 +271,15 @@ export default function Header({ user, onLogin }) {
             setLoginForm({ ...loginForm, password: e.target.value })
           }
         />
+        <div className={styles.forgotRow}>
+          <button
+            type="button"
+            className={styles.forgotLink}
+            onClick={() => leaveModalTo("/forgot-password")}
+          >
+            ลืมรหัสผ่าน?
+          </button>
+        </div>
         <button className={styles.submitBtn} onClick={handleLogin}>
           เข้าสู่ระบบ
         </button>
@@ -307,6 +323,16 @@ export default function Header({ user, onLogin }) {
         <button className={styles.submitBtn} onClick={handleRegister}>
           สมัครสมาชิกฟรี
         </button>
+        <p className={styles.consent}>
+          การสมัครสมาชิกถือว่าคุณยอมรับ{" "}
+          <button type="button" onClick={() => leaveModalTo("/terms")}>
+            เงื่อนไขการใช้งาน
+          </button>{" "}
+          และ{" "}
+          <button type="button" onClick={() => leaveModalTo("/privacy")}>
+            นโยบายความเป็นส่วนตัว
+          </button>
+        </p>
         <p className={styles.switchText}>
           มีบัญชีแล้ว?{" "}
           <span

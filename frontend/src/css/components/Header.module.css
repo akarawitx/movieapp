@@ -271,6 +271,49 @@
   margin-top: 6px;
 }
 
+.forgotRow {
+  display: flex;
+  justify-content: flex-end;
+  margin: -6px 0 8px;
+}
+
+.forgotLink {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Prompt", sans-serif;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.forgotLink:hover {
+  color: var(--gold);
+}
+
+.consent {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: #666;
+  text-align: center;
+}
+
+.consent button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: "Prompt", sans-serif;
+  font-size: 12px;
+  color: #aaa;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.consent button:hover {
+  color: var(--gold);
+}
+
 .switchText {
   text-align: center;
   margin-top: 18px;

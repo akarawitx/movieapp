@@ -60,8 +60,8 @@ export default function Footer() {
       links: [
         { label: "เกี่ยวกับเรา", to: "/about" },
         { label: "ติดต่อเรา", to: "/contact" },
-        { label: "นโยบายความเป็นส่วนตัว" },
-        { label: "เงื่อนไขการใช้งาน" },
+        { label: "นโยบายความเป็นส่วนตัว", to: "/privacy" },
+        { label: "เงื่อนไขการใช้งาน", to: "/terms" },
       ],
     },
   ];

@@ -265,25 +265,6 @@ textarea.input {
   margin-top: 12px;
 }
 
-/* ── Password strength ── */
-.strength {
-  display: flex;
-  gap: 4px;
-  margin-top: 8px;
-}
-
-.strength span {
-  flex: 1;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--dark5);
-}
-
-.strengthLabel {
-  font-size: 12px;
-  margin-top: 5px;
-}
-
 /* ── Chips & switches ── */
 .chips {
   display: flex;
