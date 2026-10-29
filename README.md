@@ -16,10 +16,12 @@
 
 # 🎬 MovieApp (PixelFilm) — Movie Review Platform
 
+[![Frontend CI](https://github.com/akarawitx/movieapp/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/akarawitx/movieapp/actions/workflows/frontend-ci.yml)
+
 ระบบรีวิวและให้คะแนนหนังแบบ Full Stack สร้างด้วย React + Django + PostgreSQL
 (ชื่อแบรนด์ที่แสดงบนหน้าเว็บคือ **PixelFilm**)
 
-> 📅 อัปเดตล่าสุด: 2026-10-26
+> 📅 อัปเดตล่าสุด: 2026-10-29
 
 ---
 
@@ -35,6 +37,7 @@
 - [แนวทางการเขียน CSS](#แนวทางการเขียน-css)
 - [API Endpoints (เตรียมไว้)](#api-endpoints-เตรียมไว้)
 - [การติดตั้งและรันโปรเจกต์](#การติดตั้งและรันโปรเจกต์)
+- [การทดสอบ (Testing)](#การทดสอบ-testing)
 - [แผนการพัฒนาต่อ (Roadmap)](#แผนการพัฒนาต่อ-roadmap)
 - [ข้อมูล Environment Variables](#ข้อมูล-environment-variables)
 
@@ -52,6 +55,7 @@
 | Backend — Django REST API | 🟡 เตรียมไว้เบื้องต้น | โครงสร้างพื้นฐานเท่านั้น ยังไม่ได้เชื่อมต่อกับ Frontend |
 | Database — PostgreSQL (Docker) | 🟡 เตรียมไว้เบื้องต้น | มี `docker-compose.yml` สำหรับรัน PostgreSQL |
 | Authentication จริง (JWT) | 🔴 ยังไม่เชื่อมต่อ | Frontend ใช้ระบบจำลองอยู่ |
+| Frontend — Automated tests | 🟢 เสร็จแล้ว | Vitest + Testing Library 96 เทสต์ รันอัตโนมัติด้วย GitHub Actions ทุกครั้งที่ push |
 | Deploy | 🟡 Frontend | มี `vercel.json` สำหรับ deploy Frontend (SPA rewrites) |
 
 ---
@@ -213,6 +217,8 @@ MovieApp เป็นระบบจัดการและรีวิวห�
 | Image Upload | Pillow | latest | 🟡 เตรียมไว้เบื้องต้น |
 | Database | PostgreSQL | v16 | 🟡 เตรียมไว้เบื้องต้น |
 | Container | Docker + Docker Compose | v28 | 🟡 ใช้รันฐานข้อมูล |
+| Testing | Vitest + React Testing Library + jsdom | Vitest 5 | 🟢 ใช้งานอยู่ |
+| CI | GitHub Actions | - | 🟢 lint + test + build ทุก push / PR |
 | Version Control | Git + GitHub | - | - |
 | Editor / Testing | VSCode, Postman, PowerShell | - | - |
 
@@ -484,6 +490,35 @@ python manage.py runserver
 Backend พร้อมที่ `http://127.0.0.1:8000`
 
 > 🔒 ค่าใน `.env` ด้านบนเป็นตัวอย่างสำหรับพัฒนาในเครื่องเท่านั้น ห้ามนำไปใช้จริงบน Production
+
+---
+
+## การทดสอบ (Testing)
+
+Frontend ใช้ **[Vitest](https://vitest.dev)** + **[React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)** บน jsdom
+เทสต์ตรวจพฤติกรรมที่ผู้ใช้เห็น (หาองค์ประกอบจาก role / label / ข้อความ) ไม่ผูกกับรายละเอียดภายในของคอมโพเนนต์
+
+```bash
+cd frontend
+npm test                # watch mode ระหว่างพัฒนา
+npm run test:run        # รันครั้งเดียว
+npm run test:coverage   # รันพร้อมรายงาน coverage (HTML อยู่ที่ frontend/coverage/index.html)
+```
+
+### ขอบเขตของเทสต์
+
+| ระดับ | ไฟล์ | ตรวจอะไร |
+|---|---|---|
+| Unit | `utils/*.test.js` | การค้นหาและจัดอันดับ, ไฮไลต์คำค้น, localStorage (ข้อมูลเสีย / พื้นที่เต็ม), จัดรูปแบบวันที่ |
+| Unit | `data/data.test.js` | ความถูกต้องของข้อมูลตั้งต้น (id ไม่ซ้ำ, แนวหนังมีอยู่จริง), `slugify`, รีวิวจำลองคงที่, hash รหัสผ่าน |
+| Unit | `hooks/*.test.js(x)` | แบ่งหน้า, เรียงคอลัมน์, กรองรีวิวที่ถูกซ่อน / ผู้เขียนถูกระงับ / หนังถูกซ่อน |
+| State | `context/*.test.jsx` | ล็อกอิน / สมัคร / เปลี่ยนรหัสผ่าน, กันพลาดของผู้ดูแล (ห้ามแก้ตัวเอง, ต้องเหลือผู้ดูแลอย่างน้อย 1 คน), ระงับ / รีเซ็ตรหัส / ลบบัญชี, CRUD หนังและแนวหนัง, เลิกทำ |
+| Component | `components/admin/AdminRoute.test.jsx` | guest → ขอให้ล็อกอิน, ผู้ใช้ทั่วไป → 404, ผู้ดูแล → เข้าได้ |
+| Integration | `App.test.jsx` | ล็อกอินผู้ดูแลจาก Header, ออกจากระบบจากหน้าที่ต้องล็อกอิน, สร้างหนังในหน้าผู้ดูแลแล้วเห็นบนหน้าเว็บ, ระงับบัญชีผ่าน dialog |
+
+- **เกณฑ์ coverage ขั้นต่ำ** (ตั้งไว้ใน `vite.config.js`): `utils/` และ `data/` ≥ 90%, `context/` ≥ 70% ถ้าต่ำกว่านี้ CI จะไม่ผ่าน
+- **CI** (`.github/workflows/frontend-ci.yml`): รัน `lint` → `test:coverage` → `build` ทุกครั้งที่ push หรือเปิด PR ที่แก้ `frontend/` และอัปโหลดรายงาน coverage เก็บไว้ 7 วัน
+- **ตัวช่วย** อยู่ใน `src/test/`: `setup.js` (jest-dom, ล้าง localStorage ก่อนทุกเทสต์, จำลอง API ที่ jsdom ไม่มี) และ `utils.jsx` (`renderStore`, `renderWithRouter`, `renderApp`)
 
 ---
 

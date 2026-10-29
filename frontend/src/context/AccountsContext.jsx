@@ -130,6 +130,9 @@ export function AccountsProvider({ user, onUserChange, children }) {
   const activeAdmins = Object.values(accounts).filter(
     (a) => a.role === 'admin' && a.status === 'active'
   )
+  // เป้าหมายเป็นผู้ดูแลที่ใช้งานได้คนสุดท้าย (ผู้ดูแลที่ถูกระงับอยู่แล้วไม่นับ)
+  const isLastActiveAdmin = (target) =>
+    target.role === 'admin' && target.status === 'active' && activeAdmins.length <= 1
 
   const logAction = (action, target, detail = '') =>
     setAuditLog((prev) =>
@@ -143,7 +146,7 @@ export function AccountsProvider({ user, onUserChange, children }) {
     const target = accounts[username]
     if (!target) return { error: 'ไม่พบบัญชีนี้' }
     if (username === user) return { error: 'ไม่สามารถเปลี่ยนสิทธิ์ของบัญชีตัวเองได้' }
-    if (target.role === 'admin' && role !== 'admin' && activeAdmins.length <= 1) {
+    if (role !== 'admin' && isLastActiveAdmin(target)) {
       return { error: 'ต้องมีผู้ดูแลระบบอย่างน้อย 1 คน' }
     }
     patchAccount(username, { role })
@@ -154,7 +157,7 @@ export function AccountsProvider({ user, onUserChange, children }) {
     const target = accounts[username]
     if (!target) return { error: 'ไม่พบบัญชีนี้' }
     if (username === user) return { error: 'ไม่สามารถระงับบัญชีตัวเองได้' }
-    if (status === 'suspended' && target.role === 'admin' && activeAdmins.length <= 1) {
+    if (status === 'suspended' && isLastActiveAdmin(target)) {
       return { error: 'ต้องมีผู้ดูแลระบบที่ใช้งานได้อย่างน้อย 1 คน' }
     }
     patchAccount(username, { status })
@@ -172,7 +175,7 @@ export function AccountsProvider({ user, onUserChange, children }) {
     const target = accounts[username]
     if (!target) return { error: 'ไม่พบบัญชีนี้' }
     if (username === user) return { error: 'ไม่สามารถลบบัญชีตัวเองจากหน้านี้ได้' }
-    if (target.role === 'admin' && activeAdmins.length <= 1) {
+    if (isLastActiveAdmin(target)) {
       return { error: 'ต้องมีผู้ดูแลระบบอย่างน้อย 1 คน' }
     }
     removeAccount(username)

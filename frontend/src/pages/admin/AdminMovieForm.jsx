@@ -102,13 +102,14 @@ const toMovie = (f) => ({
   reviews: Number(f.reviews),
 });
 
-function Field({ label, required, error, hint, full, children }) {
+// htmlFor ผูก label กับช่องกรอก (โปรแกรมอ่านหน้าจอและเทสต์หาช่องจากชื่อ label ได้)
+function Field({ label, htmlFor, required, error, hint, full, children }) {
   return (
     <div className={`${styles.field} ${full ? styles.full : ""}`}>
-      <span className={styles.label}>
+      <label className={styles.label} htmlFor={htmlFor}>
         {label}
-        {required && <span className={styles.required}>*</span>}
-      </span>
+        {required && <span className={styles.required} aria-hidden="true">*</span>}
+      </label>
       {children}
       {error ? <span className={styles.error}>{error}</span> : hint && <span className={styles.hint}>{hint}</span>}
     </div>
@@ -226,8 +227,8 @@ export default function AdminMovieForm() {
         <div className={styles.formMain}>
           <Section title="ข้อมูลหลัก">
             <div className={styles.fields}>
-              <Field label="ชื่อเรื่อง" required error={shownErrors.title} full>
-                <input
+              <Field label="ชื่อเรื่อง" htmlFor="mf-title" required error={shownErrors.title} full>
+                <input id="mf-title"
                   className={`${styles.input} ${shownErrors.title ? styles.inputError : ""}`}
                   value={form.title}
                   onChange={set("title")}
@@ -236,7 +237,7 @@ export default function AdminMovieForm() {
                 />
               </Field>
               <Field
-                label="id (ใช้ใน URL)"
+                label="id (ใช้ใน URL)" htmlFor="mf-id"
                 required={isNew}
                 error={shownErrors.id}
                 hint={isNew ? "สร้างจากชื่อเรื่องอัตโนมัติ แก้ได้ · เปลี่ยนไม่ได้หลังบันทึก" : "เปลี่ยนไม่ได้ เพื่อไม่ให้ลิงก์เดิมเสีย"}
@@ -244,7 +245,7 @@ export default function AdminMovieForm() {
               >
                 <div className={styles.prefix}>
                   <span>/movies/</span>
-                  <input
+                  <input id="mf-id"
                     className={`${styles.input} ${shownErrors.id ? styles.inputError : ""}`}
                     value={form.id}
                     onChange={(e) => {
@@ -256,8 +257,8 @@ export default function AdminMovieForm() {
                   />
                 </div>
               </Field>
-              <Field label="แนวหนัง" required error={shownErrors.genre}>
-                <select
+              <Field label="แนวหนัง" htmlFor="mf-genre" required error={shownErrors.genre}>
+                <select id="mf-genre"
                   className={`${styles.select} ${shownErrors.genre ? styles.inputError : ""}`}
                   value={form.genre}
                   onChange={set("genre")}
@@ -270,8 +271,8 @@ export default function AdminMovieForm() {
                   ))}
                 </select>
               </Field>
-              <Field label="เรตติ้ง">
-                <select className={styles.select} value={form.rated} onChange={set("rated")}>
+              <Field label="เรตติ้ง" htmlFor="mf-rated">
+                <select id="mf-rated" className={styles.select} value={form.rated} onChange={set("rated")}>
                   {RATINGS.map((r) => (
                     <option key={r} value={r}>
                       {r}
@@ -279,8 +280,8 @@ export default function AdminMovieForm() {
                   ))}
                 </select>
               </Field>
-              <Field label="ปีที่ออกฉาย" required error={shownErrors.year}>
-                <input
+              <Field label="ปีที่ออกฉาย" htmlFor="mf-year" required error={shownErrors.year}>
+                <input id="mf-year"
                   type="number"
                   className={`${styles.input} ${shownErrors.year ? styles.inputError : ""}`}
                   value={form.year}
@@ -289,8 +290,8 @@ export default function AdminMovieForm() {
                   max={THIS_YEAR + 10}
                 />
               </Field>
-              <Field label="วันที่เข้าฉาย" hint="ใช้ในหน้าปฏิทินฉาย และตัวเรียง “เร็วๆ นี้”">
-                <input
+              <Field label="วันที่เข้าฉาย" htmlFor="mf-release-date" hint="ใช้ในหน้าปฏิทินฉาย และตัวเรียง “เร็วๆ นี้”">
+                <input id="mf-release-date"
                   type="date"
                   className={styles.input}
                   value={form.releaseDate}
@@ -350,45 +351,45 @@ export default function AdminMovieForm() {
 
           <Section title="เรื่องย่อและทีมงาน">
             <div className={styles.fields}>
-              <Field label="เรื่องย่อ" required error={shownErrors.synopsis} full>
-                <textarea
+              <Field label="เรื่องย่อ" htmlFor="mf-synopsis" required error={shownErrors.synopsis} full>
+                <textarea id="mf-synopsis"
                   className={`${styles.textarea} ${shownErrors.synopsis ? styles.inputError : ""}`}
                   value={form.synopsis}
                   onChange={set("synopsis")}
                   rows={4}
                 />
               </Field>
-              <Field label="ผู้กำกับ" required error={shownErrors.director}>
-                <input
+              <Field label="ผู้กำกับ" htmlFor="mf-director" required error={shownErrors.director}>
+                <input id="mf-director"
                   className={`${styles.input} ${shownErrors.director ? styles.inputError : ""}`}
                   value={form.director}
                   onChange={set("director")}
                 />
               </Field>
-              <Field label="สตูดิโอ">
-                <input className={styles.input} value={form.studio} onChange={set("studio")} />
+              <Field label="สตูดิโอ" htmlFor="mf-studio">
+                <input id="mf-studio" className={styles.input} value={form.studio} onChange={set("studio")} />
               </Field>
-              <Field label="นักแสดง" hint="คั่นแต่ละคนด้วยเครื่องหมายจุลภาค (,) คนแรกคือนักแสดงนำ" full>
-                <input
+              <Field label="นักแสดง" htmlFor="mf-cast" hint="คั่นแต่ละคนด้วยเครื่องหมายจุลภาค (,) คนแรกคือนักแสดงนำ" full>
+                <input id="mf-cast"
                   className={styles.input}
                   value={form.cast}
                   onChange={set("cast")}
                   placeholder="Timothée Chalamet, Zendaya"
                 />
               </Field>
-              <Field label="ภาษา">
-                <input className={styles.input} value={form.language} onChange={set("language")} />
+              <Field label="ภาษา" htmlFor="mf-language">
+                <input id="mf-language" className={styles.input} value={form.language} onChange={set("language")} />
               </Field>
-              <Field label="ประเทศ">
-                <input className={styles.input} value={form.country} onChange={set("country")} />
+              <Field label="ประเทศ" htmlFor="mf-country">
+                <input id="mf-country" className={styles.input} value={form.country} onChange={set("country")} />
               </Field>
             </div>
           </Section>
 
           <Section title="รูปภาพ">
             <div className={styles.fields}>
-              <Field label="ลิงก์โปสเตอร์" error={shownErrors.poster} hint="แนะนำสัดส่วน 2:3" full>
-                <input
+              <Field label="ลิงก์โปสเตอร์" htmlFor="mf-poster" error={shownErrors.poster} hint="แนะนำสัดส่วน 2:3" full>
+                <input id="mf-poster"
                   type="url"
                   className={`${styles.input} ${shownErrors.poster ? styles.inputError : ""}`}
                   value={form.poster}
@@ -396,8 +397,8 @@ export default function AdminMovieForm() {
                   placeholder="https://..."
                 />
               </Field>
-              <Field label="ลิงก์ภาพพื้นหลัง (backdrop)" error={shownErrors.backdrop} hint="แนะนำสัดส่วน 16:9 · ถ้าไม่ใส่จะใช้โปสเตอร์แทน" full>
-                <input
+              <Field label="ลิงก์ภาพพื้นหลัง (backdrop)" htmlFor="mf-backdrop" error={shownErrors.backdrop} hint="แนะนำสัดส่วน 16:9 · ถ้าไม่ใส่จะใช้โปสเตอร์แทน" full>
+                <input id="mf-backdrop"
                   type="url"
                   className={`${styles.input} ${shownErrors.backdrop ? styles.inputError : ""}`}
                   value={form.backdrop}
@@ -410,8 +411,8 @@ export default function AdminMovieForm() {
 
           <Section title="สถิติ (ข้อมูลจำลอง)">
             <div className={styles.fields}>
-              <Field label="คะแนนเฉลี่ย" error={shownErrors.score} hint="0–10 · เมื่อต่อ backend จะคำนวณจากรีวิวจริง">
-                <input
+              <Field label="คะแนนเฉลี่ย" htmlFor="mf-score" error={shownErrors.score} hint="0–10 · เมื่อต่อ backend จะคำนวณจากรีวิวจริง">
+                <input id="mf-score"
                   type="number"
                   className={`${styles.input} ${shownErrors.score ? styles.inputError : ""}`}
                   value={form.score}
@@ -421,8 +422,8 @@ export default function AdminMovieForm() {
                   step="0.1"
                 />
               </Field>
-              <Field label="จำนวนรีวิว" error={shownErrors.reviews} hint="0 = ยังไม่มีรีวิวจากชุมชน">
-                <input
+              <Field label="จำนวนรีวิว" htmlFor="mf-reviews" error={shownErrors.reviews} hint="0 = ยังไม่มีรีวิวจากชุมชน">
+                <input id="mf-reviews"
                   type="number"
                   className={`${styles.input} ${shownErrors.reviews ? styles.inputError : ""}`}
                   value={form.reviews}
