@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MOVIES } from "../data/movies";
-import { getAllReviews, REVIEWERS } from "../data/movieDetails";
+import { REVIEWERS } from "../data/movieDetails";
 import { useProfile } from "../context/ProfileContext";
+import { useCatalog } from "../context/CatalogContext";
+import useCommunityReviews from "../hooks/useCommunityReviews";
 import useLoginPrompt from "../hooks/useLoginPrompt";
 import Avatar from "../components/Avatar";
 import Poster from "../components/Poster";
@@ -23,18 +24,18 @@ const SCORE_FILTERS = [
   { id: "critical", label: "วิจารณ์ (≤5)", test: (s) => s <= 5 },
 ];
 
-const GENRES = [...new Set(MOVIES.map((m) => m.genreLabel))];
-
 const formatDate = (iso) =>
   new Date(iso).toLocaleDateString("th-TH", { day: "numeric", month: "short", year: "numeric" });
 
 // นักรีวิวที่ได้ยอดถูกใจรวมมากที่สุด
-const TOP_REVIEWERS = REVIEWERS.map((r) => {
-  const mine = getAllReviews(MOVIES).filter(({ review }) => review.username === r.username);
-  return { ...r, count: mine.length, likes: mine.reduce((s, { review }) => s + review.likes, 0) };
-})
-  .sort((a, b) => b.likes - a.likes)
-  .slice(0, 5);
+const topReviewers = (all) =>
+  REVIEWERS.map((r) => {
+    const mine = all.filter(({ review }) => review.username === r.username);
+    return { ...r, count: mine.length, likes: mine.reduce((s, { review }) => s + review.likes, 0) };
+  })
+    .filter((r) => r.count > 0)
+    .sort((a, b) => b.likes - a.likes)
+    .slice(0, 5);
 
 function FeedCard({ entry, liked, onLike }) {
   const { movie, review, author } = entry;
@@ -109,6 +110,10 @@ export default function ReviewsFeedPage({ user }) {
   const [genre, setGenre] = useState("all");
   const [visible, setVisible] = useState(PAGE_SIZE);
   const [liked, setLiked] = useState(() => new Set());
+  const { movies: MOVIES } = useCatalog();
+  const { all: allReviews } = useCommunityReviews();
+  const GENRES = [...new Set(MOVIES.map((m) => m.genreLabel))];
+  const TOP_REVIEWERS = topReviewers(allReviews);
 
   const reviewerByUsername = Object.fromEntries(REVIEWERS.map((r) => [r.username, r]));
 
@@ -129,7 +134,7 @@ export default function ReviewsFeedPage({ user }) {
           .filter((e) => e.movie)
       : [];
 
-  const others = getAllReviews(MOVIES).map(({ movie, review }) => ({
+  const others = allReviews.map(({ movie, review }) => ({
     movie,
     review,
     author: { ...reviewerByUsername[review.username], isMe: false },

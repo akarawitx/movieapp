@@ -291,6 +291,17 @@
   color: var(--gold);
 }
 
+.authError {
+  margin: 4px 0 10px;
+  padding: 9px 12px;
+  border-radius: 8px;
+  background: rgba(229, 9, 20, 0.1);
+  border: 1px solid rgba(229, 9, 20, 0.35);
+  color: #ff8a8a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .consent {
   margin-top: 12px;
   font-size: 12px;

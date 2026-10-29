@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { MOVIES } from "../data/movies";
+import { useCatalog } from "../context/CatalogContext";
+import useCommunityReviews from "../hooks/useCommunityReviews";
 import { searchMovies, searchReviews } from "../utils/search";
 import { useProfile } from "../context/ProfileContext";
 import useLoginPrompt from "../hooks/useLoginPrompt";
@@ -34,8 +35,10 @@ export default function SearchPage({ user, onToast }) {
   const [reviewLimit, setReviewLimit] = useState(REVIEW_PAGE);
   const [selected, setSelected] = useState(null);
 
-  const movies = searchMovies(query);
-  const reviews = searchReviews(query);
+  const { movies: catalog } = useCatalog();
+  const { all: allReviews } = useCommunityReviews();
+  const movies = searchMovies(catalog, query);
+  const reviews = searchReviews(allReviews, query);
   const genres = [...new Set(movies.map((m) => m.genreLabel))].map((label) => [label, label]);
 
   const shownMovies = movies
@@ -60,7 +63,7 @@ export default function SearchPage({ user, onToast }) {
   };
 
   const total = movies.length + reviews.length;
-  const topRated = [...MOVIES].sort((a, b) => b.score - a.score).slice(0, 5);
+  const topRated = [...catalog].sort((a, b) => b.score - a.score).slice(0, 5);
 
   return (
     <div className={styles.page}>

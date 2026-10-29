@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { MOVIES, FEATURED_REVIEW } from "../data/movies";
+import { FEATURED_REVIEW } from "../data/movies";
+import { useCatalog } from "../context/CatalogContext";
 import HeroBanner from "../components/HeroBanner";
 import StatsBar from "../components/StatsBar";
 import GenreTabs from "../components/GenreTabs";
@@ -64,6 +65,7 @@ export default function HomePage({ user, onToast }) {
   const [activeGenre, setActiveGenre] = useState("all");
   const [selectedMovie, setSelectedMovie] = useState(null);
   const { addToWatchlist } = useProfile();
+  const { movies: MOVIES } = useCatalog();
 
   const filtered =
     activeGenre === "all"
@@ -87,11 +89,13 @@ export default function HomePage({ user, onToast }) {
   return (
     <div>
       {/* Hero - เต็มความกว้าง */}
-      <HeroBanner
-        movie={heroMovie}
-        onOpen={(m) => navigate(`/movies/${m.id}#reviews`)}
-        onWatchlist={handleWatchlist}
-      />
+      {heroMovie && (
+        <HeroBanner
+          movie={heroMovie}
+          onOpen={(m) => navigate(`/movies/${m.id}#reviews`)}
+          onWatchlist={handleWatchlist}
+        />
+      )}
 
       {/* Container สำหรับทุกส่วนที่เหลือ */}
       <div className="container">
@@ -124,77 +128,79 @@ export default function HomePage({ user, onToast }) {
           />
         </section>
 
-        {/* Featured Review */}
-        <section className={styles.section}>
-          <SectionHeader
-            title="รีวิวแนะนำ"
-            onViewAll={() => navigate("/reviews")}
-          />
+        {/* Featured Review — ซ่อนถ้าหนังเรื่องนั้นถูกซ่อนหรือลบ */}
+        {featuredMovie && (
+          <section className={styles.section}>
+            <SectionHeader
+              title="รีวิวแนะนำ"
+              onViewAll={() => navigate("/reviews")}
+            />
 
-          <div className={styles.featured}>
-            <div className={styles.featuredPoster}>
-              <img
-                className={styles.featuredPosterImg}
-                src={featuredMovie?.poster}
-                alt=""
-              />
-            </div>
-            <div className={styles.featuredBody}>
-              <div>
-                <div className={styles.featuredMovie}>
-                  {featuredMovie?.title} ({featuredMovie?.year})
-                </div>
-                <div className={styles.reviewer}>
-                  {/* สีพื้นหลังมาจากข้อมูล จึงเก็บเป็น inline style ไว้ */}
-                  <div
-                    className={styles.reviewerAvatar}
-                    style={{ background: FEATURED_REVIEW.color }}
-                  >
-                    {FEATURED_REVIEW.initials}
+            <div className={styles.featured}>
+              <div className={styles.featuredPoster}>
+                <img
+                  className={styles.featuredPosterImg}
+                  src={featuredMovie?.poster}
+                  alt=""
+                />
+              </div>
+              <div className={styles.featuredBody}>
+                <div>
+                  <div className={styles.featuredMovie}>
+                    {featuredMovie?.title} ({featuredMovie?.year})
                   </div>
-                  <div>
-                    <div className={styles.reviewerName}>
-                      {FEATURED_REVIEW.reviewer}
+                  <div className={styles.reviewer}>
+                    {/* สีพื้นหลังมาจากข้อมูล จึงเก็บเป็น inline style ไว้ */}
+                    <div
+                      className={styles.reviewerAvatar}
+                      style={{ background: FEATURED_REVIEW.color }}
+                    >
+                      {FEATURED_REVIEW.initials}
                     </div>
-                    <span className={styles.reviewerBadge}>
-                      {FEATURED_REVIEW.badge}
-                    </span>
+                    <div>
+                      <div className={styles.reviewerName}>
+                        {FEATURED_REVIEW.reviewer}
+                      </div>
+                      <span className={styles.reviewerBadge}>
+                        {FEATURED_REVIEW.badge}
+                      </span>
+                    </div>
                   </div>
+                  <div className={styles.stars}>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <span
+                        key={i}
+                        className={`${styles.star} ${
+                          i <= FEATURED_REVIEW.score / 2 ? styles.starOn : ""
+                        }`}
+                      >
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                  <p className={styles.quote}>"{FEATURED_REVIEW.text}"</p>
                 </div>
-                <div className={styles.stars}>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <span
-                      key={i}
-                      className={`${styles.star} ${
-                        i <= FEATURED_REVIEW.score / 2 ? styles.starOn : ""
-                      }`}
-                    >
-                      ★
-                    </span>
-                  ))}
+                <div className={styles.featuredActions}>
+                  {[`❤ ${FEATURED_REVIEW.likes}`, "ความคิดเห็น", "อ่านต่อ →"].map(
+                    (btn) => (
+                      <button
+                        key={btn}
+                        className={styles.chip}
+                        onClick={
+                          btn === "อ่านต่อ →"
+                            ? () => navigate(`/movies/${FEATURED_REVIEW.movieId}`)
+                            : undefined
+                        }
+                      >
+                        {btn}
+                      </button>
+                    ),
+                  )}
                 </div>
-                <p className={styles.quote}>"{FEATURED_REVIEW.text}"</p>
-              </div>
-              <div className={styles.featuredActions}>
-                {[`❤ ${FEATURED_REVIEW.likes}`, "ความคิดเห็น", "อ่านต่อ →"].map(
-                  (btn) => (
-                    <button
-                      key={btn}
-                      className={styles.chip}
-                      onClick={
-                        btn === "อ่านต่อ →"
-                          ? () => navigate(`/movies/${FEATURED_REVIEW.movieId}`)
-                          : undefined
-                      }
-                    >
-                      {btn}
-                    </button>
-                  ),
-                )}
               </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
         {/* Upcoming */}
         <section id="upcoming" className={styles.sectionLast}>

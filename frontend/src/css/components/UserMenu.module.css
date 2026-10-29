@@ -140,3 +140,7 @@
   background: rgba(229, 9, 20, 0.1);
   color: #ff8787;
 }
+
+.admin {
+  color: var(--gold);
+}

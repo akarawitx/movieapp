@@ -5,9 +5,10 @@ import SearchBox from "./SearchBox";
 import MobileMenu from "./MobileMenu";
 import Icon from "./Icon";
 import { useProfile } from "../context/ProfileContext";
+import { useAccounts } from "../context/AccountsContext";
 import styles from "../css/components/Header.module.css";
 
-const PROTECTED_PATHS = ["/profile", "/settings", "/watchlist"];
+const PROTECTED_PATHS = ["/profile", "/settings", "/watchlist", "/admin"];
 
 const NAV_ITEMS = [
   { label: "รายการหนังทั้งหมด", path: "/movies" },
@@ -66,7 +67,7 @@ function Modal({ isOpen, onClose, children }) {
   );
 }
 
-function Field({ label, type = "text", placeholder, value, onChange }) {
+function Field({ label, type = "text", placeholder, value, onChange, autoComplete }) {
   return (
     <div className={styles.field}>
       <label className={styles.fieldLabel}>{label}</label>
@@ -76,6 +77,7 @@ function Field({ label, type = "text", placeholder, value, onChange }) {
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        autoComplete={autoComplete}
       />
     </div>
   );
@@ -86,6 +88,8 @@ export default function Header({ user, onLogin }) {
   const location = useLocation();
   const { pathname } = location;
   const { profile } = useProfile();
+  const { login, register, isAdmin } = useAccounts();
+  const [authError, setAuthError] = useState("");
   const [loginOpen, setLoginOpen] = useState(false);
   const [registerOpen, setRegisterOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -110,35 +114,58 @@ export default function Header({ user, onLogin }) {
     if (loginRedirect) navigate(pathname, { replace: true, state: null });
   };
 
-  const completeAuth = (username) => {
-    onLogin?.(username);
+  // ผู้ดูแลระบบ → ไปหน้าจัดการ (ยกเว้นถูกพามาจากหน้าที่ต้องล็อกอิน ให้กลับไปหน้านั้น)
+  const completeAuth = (account) => {
     if (loginRedirect?.from) navigate(loginRedirect.from, { replace: true });
+    else if (account.role === "admin") navigate("/admin");
   };
 
-  const handleLogin = () => {
-    if (!loginForm.username || !loginForm.password) return;
-    completeAuth(loginForm.username);
+  const closeAuth = () => {
+    setAuthError("");
     setLoginOpen(false);
+    setRegisterOpen(false);
+  };
+
+  const openLogin = () => {
+    setAuthError("");
+    setRegisterOpen(false);
+    setLoginOpen(true);
+  };
+
+  const openRegister = () => {
+    setAuthError("");
+    setLoginOpen(false);
+    setRegisterOpen(true);
+  };
+
+  const handleLogin = (e) => {
+    e?.preventDefault();
+    const { account, error } = login(loginForm.username, loginForm.password);
+    if (error) return setAuthError(error);
+    completeAuth(account);
+    closeAuth();
     setLoginForm({ username: "", password: "" });
   };
 
-  const handleRegister = () => {
-    if (!regForm.username || !regForm.email || !regForm.password) return;
-    completeAuth(regForm.username);
-    setRegisterOpen(false);
+  const handleRegister = (e) => {
+    e?.preventDefault();
+    const { account, error } = register(regForm);
+    if (error) return setAuthError(error);
+    completeAuth(account);
+    closeAuth();
     setRegForm({ username: "", email: "", password: "" });
   };
 
   // ปิดหน้าต่าง Login/สมัคร แล้วไปหน้าอื่น (ลืมรหัสผ่าน, เงื่อนไข, นโยบาย)
   const leaveModalTo = (path) => {
-    setLoginOpen(false);
-    setRegisterOpen(false);
+    closeAuth();
     navigate(path);
   };
 
   const handleLogout = () => {
-    if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) navigate("/");
-    onLogin?.(null);
+    // หน้าที่ต้องล็อกอิน → ให้ App ล้างผู้ใช้หลังจากไปถึงหน้าแรกแล้ว
+    if (PROTECTED_PATHS.some((p) => pathname.startsWith(p))) navigate("/", { state: { logout: true } });
+    else onLogin?.(null);
   };
 
   const modalLogo = (sub) => (
@@ -192,21 +219,15 @@ export default function Header({ user, onLogin }) {
           </button>
           {!user || !profile ? (
             <>
-              <button
-                className={styles.btnLogin}
-                onClick={() => setLoginOpen(true)}
-              >
+              <button className={styles.btnLogin} onClick={openLogin}>
                 เข้าสู่ระบบ
               </button>
-              <button
-                className={styles.btnRegister}
-                onClick={() => setRegisterOpen(true)}
-              >
+              <button className={styles.btnRegister} onClick={openRegister}>
                 สมัครสมาชิก
               </button>
             </>
           ) : (
-            <UserMenu profile={profile} onLogout={handleLogout} />
+            <UserMenu profile={profile} isAdmin={isAdmin} onLogout={handleLogout} />
           )}
           <button
             className={`${styles.iconBtn} ${styles.menuBtn}`}
@@ -236,8 +257,9 @@ export default function Header({ user, onLogin }) {
         navItems={NAV_ITEMS}
         pathname={pathname}
         profile={user ? profile : null}
-        onLogin={() => setLoginOpen(true)}
-        onRegister={() => setRegisterOpen(true)}
+        isAdmin={isAdmin}
+        onLogin={openLogin}
+        onRegister={openRegister}
         onLogout={handleLogout}
       />
 
@@ -245,7 +267,7 @@ export default function Header({ user, onLogin }) {
       <Modal
         isOpen={loginOpen}
         onClose={() => {
-          setLoginOpen(false);
+          closeAuth();
           clearLoginRedirect();
         }}
       >
@@ -261,6 +283,7 @@ export default function Header({ user, onLogin }) {
           onChange={(e) =>
             setLoginForm({ ...loginForm, username: e.target.value })
           }
+          autoComplete="username"
         />
         <Field
           label="รหัสผ่าน"
@@ -270,6 +293,7 @@ export default function Header({ user, onLogin }) {
           onChange={(e) =>
             setLoginForm({ ...loginForm, password: e.target.value })
           }
+          autoComplete="current-password"
         />
         <div className={styles.forgotRow}>
           <button
@@ -280,25 +304,24 @@ export default function Header({ user, onLogin }) {
             ลืมรหัสผ่าน?
           </button>
         </div>
+        {authError && (
+          <p className={styles.authError} role="alert">
+            {authError}
+          </p>
+        )}
         <button className={styles.submitBtn} onClick={handleLogin}>
           เข้าสู่ระบบ
         </button>
         <p className={styles.switchText}>
           ยังไม่มีบัญชี?{" "}
-          <span
-            className={styles.switchLink}
-            onClick={() => {
-              setLoginOpen(false);
-              setRegisterOpen(true);
-            }}
-          >
+          <span className={styles.switchLink} onClick={openRegister}>
             สมัครสมาชิกฟรี
           </span>
         </p>
       </Modal>
 
       {/* Register Modal */}
-      <Modal isOpen={registerOpen} onClose={() => setRegisterOpen(false)}>
+      <Modal isOpen={registerOpen} onClose={closeAuth}>
         {modalLogo("สร้างบัญชีเพื่อเริ่มรีวิวหนัง")}
         <Field
           label="ชื่อผู้ใช้"
@@ -319,7 +342,13 @@ export default function Header({ user, onLogin }) {
           placeholder="อย่างน้อย 6 ตัวอักษร"
           value={regForm.password}
           onChange={(e) => setRegForm({ ...regForm, password: e.target.value })}
+          autoComplete="new-password"
         />
+        {authError && (
+          <p className={styles.authError} role="alert">
+            {authError}
+          </p>
+        )}
         <button className={styles.submitBtn} onClick={handleRegister}>
           สมัครสมาชิกฟรี
         </button>
@@ -335,13 +364,7 @@ export default function Header({ user, onLogin }) {
         </p>
         <p className={styles.switchText}>
           มีบัญชีแล้ว?{" "}
-          <span
-            className={styles.switchLink}
-            onClick={() => {
-              setRegisterOpen(false);
-              setLoginOpen(true);
-            }}
-          >
+          <span className={styles.switchLink} onClick={openLogin}>
             เข้าสู่ระบบ
           </span>
         </p>

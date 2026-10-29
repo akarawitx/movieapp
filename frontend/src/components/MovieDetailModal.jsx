@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useProfile } from '../context/ProfileContext'
-import { getMovieReviews } from '../data/movieDetails'
+import useCommunityReviews from '../hooks/useCommunityReviews'
 import useLoginPrompt from '../hooks/useLoginPrompt'
 import Poster from './Poster'
 import styles from '../css/components/MovieDetailModal.module.css'
@@ -9,11 +9,12 @@ import styles from '../css/components/MovieDetailModal.module.css'
 export default function MovieDetailModal({ movie, user, onClose, onToast }) {
   const { isInWatchlist, toggleWatchlist } = useProfile()
   const promptLogin = useLoginPrompt()
+  const { getReviews } = useCommunityReviews()
 
   if (!movie) return null
 
   const inWatchlist = user && isInWatchlist(movie.id)
-  const preview = [...getMovieReviews(movie)].sort((a, b) => b.likes - a.likes).slice(0, 2)
+  const preview = [...getReviews(movie)].sort((a, b) => b.likes - a.likes).slice(0, 2)
   const detailUrl = `/movies/${movie.id}`
 
   const handleWatchlist = () => {

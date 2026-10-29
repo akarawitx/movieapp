@@ -8,9 +8,9 @@
 > - โปรเจกต์นี้ **ยังพัฒนาไม่เสร็จสมบูรณ์** โดยขณะนี้โฟกัสที่การพัฒนา **Frontend (React)** เป็นหลัก
 > - ส่วน **Backend (Django + PostgreSQL)** ที่เห็นอยู่ในโปรเจกต์ เป็นเพียง **โครงสร้างพื้นฐานที่เตรียมไว้เบื้องต้นเท่านั้น** และจะพัฒนาต่อในลำดับถัดไป
 > - ปัจจุบัน **Frontend ยังไม่ได้เชื่อมต่อกับ Backend / ฐานข้อมูล** ข้อมูลหนังและรีวิวที่แสดงบนหน้าเว็บเป็น **ข้อมูลจำลอง (Mock Data)** ทั้งหมด
-> - ระบบ Login / Register บนหน้าเว็บตอนนี้เป็น **ระบบจำลอง** (ใส่ข้อมูลอะไรก็เข้าได้) ข้อมูลผู้ใช้ รีวิว และรายการอยากดู เก็บไว้ใน **localStorage ของเบราว์เซอร์** เท่านั้น
+> - ระบบ Login / Register และ **ระบบผู้ดูแล (Admin)** บนหน้าเว็บตอนนี้เป็น **ระบบจำลอง** ทะเบียนบัญชี แคตตาล็อกหนัง รีวิว และรายการอยากดู เก็บไว้ใน **localStorage ของเบราว์เซอร์** เท่านั้น การตรวจสิทธิ์ผู้ดูแลฝั่งหน้าเว็บมีไว้สาธิต ระบบจริงต้องตรวจที่ backend
 >
-> **English:** This project is **under active development**. The current focus is the **React frontend**. The Django backend in this repository is only a **preliminary scaffold** and is **not yet connected** to the frontend. All movie data and reviews shown in the UI are **mock data**, and the login/register flow is a mock — user data, reviews and watchlists are stored only in the browser's localStorage.
+> **English:** This project is **under active development**. The current focus is the **React frontend**. The Django backend in this repository is only a **preliminary scaffold** and is **not yet connected** to the frontend. All movie data and reviews shown in the UI are **mock data**. Login/register and the **admin panel** are mocks — accounts, the movie catalog, reviews and watchlists are stored only in the browser's localStorage, and the client-side admin check is for demonstration only.
 
 ---
 
@@ -19,7 +19,7 @@
 ระบบรีวิวและให้คะแนนหนังแบบ Full Stack สร้างด้วย React + Django + PostgreSQL
 (ชื่อแบรนด์ที่แสดงบนหน้าเว็บคือ **PixelFilm**)
 
-> 📅 อัปเดตล่าสุด: 2026-10-15
+> 📅 อัปเดตล่าสุด: 2026-10-26
 
 ---
 
@@ -47,6 +47,7 @@
 | Frontend — UI / หน้าเว็บ | 🟢 กำลังพัฒนา | 10 หน้า: หน้าแรก, รายการหนัง, รายละเอียดหนัง, ค้นหา, รายการอยากดู, โปรไฟล์, ตั้งค่า, เกี่ยวกับเรา, ติดต่อเรา, 404 |
 | Frontend — รองรับมือถือ | 🟢 เสร็จแล้ว | Header มีเมนู ☰ และช่องค้นหาแบบพับได้ ทุกหน้าใหม่ทดสอบที่ 375px |
 | Frontend — การจัดการสไตล์ | 🟢 เสร็จแล้ว | แยก CSS เป็น CSS Modules ครบทุกคอมโพเนนต์/หน้า |
+| Frontend — ระบบผู้ดูแล (Admin) | 🟢 เสร็จแล้ว (จำลอง) | `/admin` จัดการหนัง แนวหนัง รีวิว และบัญชีผู้ใช้ พร้อมบันทึกกิจกรรม |
 | Frontend — เชื่อมต่อ API | 🔴 ยังไม่เริ่ม | มีไฟล์ Axios + AuthContext เตรียมไว้ แต่ยังไม่ถูกเรียกใช้ |
 | Backend — Django REST API | 🟡 เตรียมไว้เบื้องต้น | โครงสร้างพื้นฐานเท่านั้น ยังไม่ได้เชื่อมต่อกับ Frontend |
 | Database — PostgreSQL (Docker) | 🟡 เตรียมไว้เบื้องต้น | มี `docker-compose.yml` สำหรับรัน PostgreSQL |
@@ -126,6 +127,43 @@ MovieApp เป็นระบบจัดการและรีวิวห�
 - ดีไซน์ให้เข้ากับธีมของเว็บ (โทนดำ-ทอง)
 - หน้าติดต่อเรามีแบบฟอร์มพร้อมตรวจสอบข้อมูลเบื้องต้น และแสดงข้อมูลติดต่อ (ข้อมูลตัวอย่าง)
 
+### 🛡️ ระบบผู้ดูแล (`/admin`) — เฉพาะบัญชีผู้ดูแล
+> บัญชีสาธิต: **`admin` / `Admin@1234`** (ล็อกอินแล้วพาไปหน้าผู้ดูแลอัตโนมัติ หรือเข้าจากเมนูผู้ใช้ → "แผงผู้ดูแลระบบ")
+
+- **Layout แยก** มี sidebar, topbar และปุ่มกลับไปหน้าเว็บ ใช้ธีมดำ-ทองเดียวกับเว็บ บนมือถือ sidebar กลายเป็น drawer
+- **แดชบอร์ด**
+  - สถิติ: หนัง, บัญชี, รีวิว, รายการอยากดูรวม
+  - รายการ: หนังที่รีวิวมากสุด, รีวิวล่าสุด, บัญชีที่สมัครล่าสุด, กิจกรรมของผู้ดูแล
+  - ทางลัดไปหน้าจัดการต่างๆ
+- **จัดการหนัง**
+  - ตาราง: ค้นหา, กรองแนว/ปี/สถานะ, เรียงตามคอลัมน์, แบ่งหน้า
+  - เปิด/ปิดการเผยแพร่ได้ หนังที่ซ่อนจะหายจากหน้าเว็บ แต่ผู้ดูแลยังเปิดดูได้
+  - ลบ: ยืนยันพร้อมบอกผลกระทบ และมีปุ่ม "เลิกทำ"
+  - ปุ่มคืนค่าแคตตาล็อกเริ่มต้น
+- **ฟอร์มเพิ่ม / แก้ไขหนัง**
+  - ครบทุกฟิลด์ พร้อมตรวจข้อมูล
+  - สร้าง id จากชื่อเรื่องอัตโนมัติ
+  - พรีวิวโปสเตอร์และภาพพื้นหลัง
+  - เตือนก่อนออกถ้ายังไม่บันทึก
+- **จัดการแนวหนัง**
+  - เพิ่ม แก้ไข ลบ และจัดลำดับ ซึ่งมีผลกับแท็บหน้าแรกและตัวกรอง
+  - ลบแนวที่ยังมีหนังใช้อยู่ไม่ได้
+- **ตรวจรีวิว**
+  - รวมรีวิวจากชุมชนและจากสมาชิก กรองตามแหล่ง/สถานะ/คะแนน
+  - ซ่อนรีวิวจากชุมชนได้ ลบรีวิวของสมาชิกได้
+- **จัดการบัญชีผู้ใช้**
+  - ตารางบัญชีทั้งหมด: อีเมล, สิทธิ์, สถานะ, จำนวนรีวิว/อยากดู, วันสมัคร, เข้าใช้ล่าสุด
+  - หน้ารายละเอียด: โปรไฟล์และกิจกรรมทั้งหมด
+  - การกระทำ: แก้ข้อมูลโปรไฟล์, เปลี่ยนสิทธิ์, ระงับ/ยกเลิกระงับ, รีเซ็ตรหัสผ่าน (ได้รหัสชั่วคราว), ลบบัญชี
+  - บัญชีที่ถูกระงับจะล็อกอินไม่ได้ และรีวิวจะหายจากหน้าเว็บ
+  - กันพลาด: แก้สิทธิ์ ระงับ หรือลบบัญชีตัวเองไม่ได้ และต้องเหลือผู้ดูแลอย่างน้อย 1 คน
+  - รหัสผ่านเก็บแบบ hash และไม่แสดงให้ผู้ดูแลเห็น
+- **บันทึกกิจกรรม (Audit log):** ทุกการเพิ่ม แก้ ลบ และเปลี่ยนสถานะ ค้นหาได้
+- **การเข้าถึงหน้าผู้ดูแล**
+  - ผู้ใช้ทั่วไปที่เข้า `/admin` จะเห็นหน้า 404
+  - ผู้ที่ยังไม่ล็อกอินจะถูกขอให้ล็อกอินก่อน
+  - โค้ดส่วนผู้ดูแลโหลดแยก (lazy) ผู้ใช้ทั่วไปไม่ต้องโหลด
+
 ### ✨ อื่นๆ
 - หน้า **404** สำหรับ URL ที่ไม่มีอยู่จริง
 - จำสถานะล็อกอินและข้อมูลผู้ใช้ข้ามการรีเฟรช (localStorage แยกตาม username)
@@ -141,9 +179,11 @@ MovieApp เป็นระบบจัดการและรีวิวห�
 
 | ฟีเจอร์ | สถานะปัจจุบัน |
 |---|---|
-| รายการหนัง | ข้อมูลหนัง 9 เรื่อง ใน `src/data/movies.js` และข้อมูลเสริม (วันฉาย, เรตติ้ง, สตูดิโอ) ใน `src/data/movieDetails.js` |
-| Login / Register | ใส่ข้อมูลอะไรก็ผ่าน จำไว้ใน localStorage ของเบราว์เซอร์ |
-| โปรไฟล์ / รูปโปรไฟล์ / ตั้งค่า | บันทึกใน localStorage เปลี่ยนรหัสผ่านเป็นเพียงการตรวจฟอร์ม |
+| รายการหนัง | ข้อมูลตั้งต้น 9 เรื่องจาก `src/data/movies.js` + `movieDetails.js` ถูกคัดลอกไปเป็นแคตตาล็อกใน localStorage ครั้งแรก หลังจากนั้นแก้ได้จากหน้าผู้ดูแล |
+| Login / Register | ตรวจกับทะเบียนบัญชีใน localStorage (รหัสผ่านเก็บแบบ hash อย่างง่าย ไม่ใช่การเข้ารหัสจริง) ชื่อผู้ใช้ที่ยังไม่มีบัญชีจะถูกสร้างให้อัตโนมัติตอนล็อกอิน |
+| ระบบผู้ดูแล | บัญชีสาธิต `admin` / `Admin@1234` ตรวจสิทธิ์ฝั่งหน้าเว็บเท่านั้น ระบบจริงต้องตรวจ `is_staff` / permission ที่ backend ทุก request |
+| บัญชีนักรีวิวชุมชน | 6 บัญชีจำลอง ยังไม่มีรหัสผ่าน ผู้ดูแลต้องรีเซ็ตรหัสผ่านให้ก่อนจึงจะล็อกอินได้ |
+| โปรไฟล์ / รูปโปรไฟล์ / ตั้งค่า | บันทึกใน localStorage เปลี่ยนรหัสผ่านตรวจกับรหัสเดิมในทะเบียนบัญชีจำลอง |
 | รีวิว / ให้คะแนน / รายการอยากดู | ของผู้ใช้บันทึกใน localStorage ส่วนรีวิวของคนอื่นสร้างจากข้อมูลจำลอง (คงที่ตาม id หนัง) |
 | ปุ่มถูกใจรีวิว | เก็บใน state ของหน้า รีเฟรชแล้วหาย |
 | ตัวอย่างภาพยนตร์ | เปิดผลค้นหาบน YouTube (ยังไม่ได้ฝังวิดีโอ) |
@@ -190,6 +230,7 @@ frontend/
 │   │   └── axios.js              # Axios instance + JWT interceptor (เตรียมไว้ ยังไม่ถูกเรียกใช้)
 │   ├── assets/                   # วาง default-avatar.png ไว้ที่นี่เพื่อใช้เป็นรูปโปรไฟล์ตั้งต้น
 │   ├── components/
+│   │   ├── admin/                # AdminRoute, AdminLayout, AdminUi (ตาราง, dialog, badge, pager)
 │   │   ├── movie/                # ReviewSection (รีวิว + ฟอร์ม + สรุปคะแนน)
 │   │   ├── profile/              # ProfileHeader, ProfileStats, ProfileActivityTabs
 │   │   ├── settings/             # ฟอร์มแต่ละหมวดในหน้าตั้งค่า
@@ -204,17 +245,26 @@ frontend/
 │   │   ├── ProtectedRoute.jsx    # กันหน้าที่ต้องล็อกอิน
 │   │   └── ...                   # Footer, HeroBanner, GenreTabs, StatsBar, Toast, Icon, Highlight
 │   ├── context/
+│   │   ├── AccountsContext.jsx   # ทะเบียนบัญชี, ล็อกอิน/สมัคร, สิทธิ์ผู้ดูแล, audit log (จำลอง + localStorage)
+│   │   ├── CatalogContext.jsx    # แคตตาล็อกหนัง, แนวหนัง, รีวิวที่ถูกซ่อน (จำลอง + localStorage)
 │   │   ├── ProfileContext.jsx    # โปรไฟล์, รายการอยากดู, รีวิวของผู้ใช้ (จำลอง + localStorage)
 │   │   └── AuthContext.jsx       # Auth จริงผ่าน API (เตรียมไว้ ยังไม่ถูกเรียกใช้)
-│   ├── css/                      # CSS Modules ทั้งหมด (components/, pages/)
+│   ├── css/                      # CSS Modules ทั้งหมด (components/, pages/, pages/admin/)
 │   ├── data/
-│   │   ├── movies.js             # ข้อมูลหนังจำลอง
+│   │   ├── movies.js             # ข้อมูลหนังและแนวหนังตั้งต้น
 │   │   ├── movieDetails.js       # ข้อมูลเสริม + รีวิวจำลอง
+│   │   ├── catalog.js            # สร้างแคตตาล็อกตั้งต้น, slugify, สถานะ/เรตติ้ง
+│   │   ├── accounts.js           # บัญชีตั้งต้น (admin + นักรีวิว), role/status, hash รหัสผ่าน
 │   │   └── profile.js            # โปรไฟล์และกิจกรรมตั้งต้น
 │   ├── hooks/
-│   │   └── useLoginPrompt.js     # เปิดหน้าต่าง Login จากที่ไหนก็ได้
+│   │   ├── useLoginPrompt.js     # เปิดหน้าต่าง Login จากที่ไหนก็ได้
+│   │   ├── useCommunityReviews.js# รีวิวชุมชนที่แสดงต่อสาธารณะ (กรองที่ถูกซ่อน/ระงับออก)
+│   │   ├── useAdminData.js       # รวมข้อมูลทุกบัญชีและทุกรีวิวสำหรับหน้าผู้ดูแล
+│   │   └── usePaging.js, useSort.js
 │   ├── pages/                    # Home, MovieBrowse, MovieDetail, Search, Watchlist,
-│   │                             # Profile, Settings, About, Contact, NotFound
+│   │   │                         # Profile, Settings, About, Contact, NotFound ฯลฯ
+│   │   └── admin/                # Dashboard, Movies, MovieForm, Users, UserDetail,
+│   │                             # Reviews, Genres, Activity
 │   ├── utils/
 │   │   ├── search.js             # ตรรกะการค้นหา + ไฮไลต์
 │   │   └── storage.js            # อ่าน/เขียน localStorage อย่างปลอดภัย
@@ -267,6 +317,10 @@ movieapp/
 | `/reset-password?token=` | ตั้งรหัสผ่านใหม่ | ตรวจความแข็งแรงและเงื่อนไขรหัสผ่าน |
 | `/about` | เกี่ยวกับเรา | แนะนำแพลตฟอร์ม |
 | `/contact` | ติดต่อเรา | ข้อมูลติดต่อและแบบฟอร์ม |
+| `/admin` | แดชบอร์ดผู้ดูแล | 🛡️ เฉพาะผู้ดูแล (ผู้ใช้ทั่วไปเห็น 404) |
+| `/admin/movies`, `/admin/movies/new`, `/admin/movies/:id/edit` | จัดการหนัง | 🛡️ ตาราง / เพิ่ม / แก้ไข |
+| `/admin/users`, `/admin/users/:username` | จัดการบัญชีผู้ใช้ | 🛡️ ตาราง / รายละเอียดและการจัดการ |
+| `/admin/reviews`, `/admin/genres`, `/admin/activity` | รีวิว / แนวหนัง / บันทึกกิจกรรม | 🛡️ |
 | อื่นๆ | 404 | หน้าไม่พบ |
 
 ### ตัวกรองผ่าน URL ของหน้า `/movies`
@@ -440,8 +494,9 @@ Backend พร้อมที่ `http://127.0.0.1:8000`
 1. **เชื่อมต่อ Authentication จริง**
    - ให้ Header ใช้ `AuthContext` (`login`, `register`, `logout`) แทนระบบจำลอง
    - ปรับรูปแบบข้อมูล `user` ให้ตรงกันทั้งแอป (ปัจจุบันบางส่วนใช้เป็น string บางส่วนเป็น object)
-   - ย้ายการอ่าน/เขียนข้อมูลใน `ProfileContext` ไปเรียก API แทน localStorage
-2. **เชื่อมต่อ API รายการหนัง** แทนข้อมูลใน `src/data/movies.js`
+   - ย้ายการอ่าน/เขียนข้อมูลใน `ProfileContext` และ `AccountsContext` ไปเรียก API แทน localStorage
+   - ระบบผู้ดูแล: ตรวจสิทธิ์ที่ backend (`is_staff` / permission class) ทุก endpoint ที่แก้ข้อมูล และบันทึก audit log ฝั่งเซิร์ฟเวอร์
+2. **เชื่อมต่อ API รายการหนัง** แทนแคตตาล็อกใน `CatalogContext` (หน้าผู้ดูแลเรียก create/update/delete ผ่าน API)
    - ต้องทำ mapping ฟิลด์ระหว่าง Frontend กับ Backend (Frontend ใช้ `score`, `reviews`, `poster`, `backdrop`, `synopsis`, `genreLabel`, `duration`, `director`, `cast` ส่วน Backend ออกแบบไว้เป็น ชื่อ, คำอธิบาย, ผู้กำกับ, ปีที่ออกฉาย, แนวหนัง, รูปภาพ)
    - เพิ่มฟิลด์วันที่ฉายเพื่อทำโซน "เร็วๆ นี้" ให้ถูกต้อง
 3. **เชื่อมต่อ Rating / Review / Comment** ให้บันทึกลงฐานข้อมูลจริง
@@ -451,7 +506,7 @@ Backend พร้อมที่ `http://127.0.0.1:8000`
 
 - Loading Skeleton ระหว่างโหลดข้อมูล (เมื่อต่อ API)
 - Pagination / Infinite Scroll
-- หน้า Create / Edit หนัง (สำหรับผู้ดูแล)
+- ระบบผู้ดูแล: เลือกหลายรายการแล้วจัดการพร้อมกัน, Export / Import JSON, ตั้งค่าหนังเด่นหน้าแรก, อัปโหลดโปสเตอร์
 
 ### ปรับปรุง Backend
 

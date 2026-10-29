@@ -4,7 +4,7 @@ import Avatar from "./Avatar";
 import Icon from "./Icon";
 import styles from "../css/components/UserMenu.module.css";
 
-export default function UserMenu({ profile, onLogout }) {
+export default function UserMenu({ profile, isAdmin = false, onLogout }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
@@ -69,6 +69,16 @@ export default function UserMenu({ profile, onLogout }) {
 
           <div className={styles.divider} />
 
+          {isAdmin && (
+            <button
+              className={`${styles.item} ${styles.admin}`}
+              role="menuitem"
+              onClick={() => go("/admin")}
+            >
+              <Icon name="shield" size={17} />
+              แผงผู้ดูแลระบบ
+            </button>
+          )}
           <button
             className={styles.item}
             role="menuitem"

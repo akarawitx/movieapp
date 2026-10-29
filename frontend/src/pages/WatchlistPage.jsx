@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MOVIES } from "../data/movies";
+import { useCatalog } from "../context/CatalogContext";
 import { useProfile } from "../context/ProfileContext";
 import Icon from "../components/Icon";
 import Poster from "../components/Poster";
@@ -170,6 +170,7 @@ export default function WatchlistPage({ onToast }) {
     addToWatchlist,
     getMyReview,
   } = useProfile();
+  const { movies: MOVIES } = useCatalog();
   const [status, setStatus] = useState("all");
   const [genre, setGenre] = useState("all");
   const [sort, setSort] = useState("added");

@@ -1,7 +1,8 @@
 import { Link, useParams } from "react-router-dom";
-import { MOVIES } from "../data/movies";
-import { getAllReviews, getReviewer } from "../data/movieDetails";
+import { getReviewer } from "../data/movieDetails";
 import { useProfile } from "../context/ProfileContext";
+import { useAccounts } from "../context/AccountsContext";
+import useCommunityReviews, { buildReviewerProfile } from "../hooks/useCommunityReviews";
 import ProfileHeader from "../components/profile/ProfileHeader";
 import ProfileStats from "../components/profile/ProfileStats";
 import ProfileActivityTabs from "../components/profile/ProfileActivityTabs";
@@ -9,53 +10,21 @@ import Icon from "../components/Icon";
 import NotFoundPage from "./NotFoundPage";
 import styles from "../css/pages/PublicProfilePage.module.css";
 
-const SPOILER_NOTE = "รีวิวนี้มีสปอยล์ — อ่านได้ในหน้ารายละเอียดหนัง";
-
-// สร้างโปรไฟล์ + กิจกรรมของนักรีวิวจำลองจากรีวิวทั้งหมดในระบบ
-function buildReviewerProfile(reviewer) {
-  const mine = getAllReviews(MOVIES).filter(({ review }) => review.username === reviewer.username);
-  return {
-    profile: {
-      firstName: reviewer.name,
-      lastName: "",
-      username: reviewer.username,
-      bio: reviewer.bio,
-      location: reviewer.location,
-      joinedAt: reviewer.joinedAt,
-      avatar: null,
-      color: reviewer.color,
-      favoriteGenres: reviewer.favoriteGenres,
-      privacy: { publicProfile: true, showWatchlist: false },
-    },
-    activity: {
-      reviews: mine
-        .map(({ movie, review }) => ({
-          id: review.id,
-          movieId: movie.id,
-          score: review.score,
-          title: review.title,
-          body: review.spoiler ? SPOILER_NOTE : review.body,
-          date: review.date,
-        }))
-        .sort((a, b) => b.date.localeCompare(a.date)),
-      ratings: mine.map(({ movie, review }) => ({ movieId: movie.id, score: review.score })),
-      watchlist: [],
-    },
-    likes: mine.reduce((sum, { review }) => sum + review.likes, 0),
-  };
-}
-
 export default function PublicProfilePage({ user }) {
   const { username } = useParams();
   const { profile: myProfile, activity: myActivity } = useProfile();
+  const { accounts } = useAccounts();
+  const { all } = useCommunityReviews();
 
   const isMe = !!user && myProfile?.username === username;
-  const reviewer = isMe ? null : getReviewer(username);
+  // นักรีวิวที่ถูกระงับหรือลบบัญชีแล้ว → ไม่แสดงโปรไฟล์
+  const reviewer =
+    isMe || accounts[username]?.status !== "active" ? null : getReviewer(username);
   if (!isMe && !reviewer) return <NotFoundPage />;
 
   const data = isMe
     ? { profile: myProfile, activity: myActivity, likes: null }
-    : buildReviewerProfile(reviewer);
+    : buildReviewerProfile(reviewer, all);
   const { profile, activity } = data;
   const isPrivate = !profile.privacy.publicProfile;
 

@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { matchReason, searchMovies } from "../utils/search";
+import { useCatalog } from "../context/CatalogContext";
 import Highlight from "./Highlight";
 import Icon from "./Icon";
 import styles from "../css/components/SearchBox.module.css";
@@ -21,7 +22,8 @@ export default function SearchBox({ autoFocus = false, onDone, className = "" })
   const inputRef = useRef(null);
   const listId = useId();
 
-  const suggestions = searchMovies(query).slice(0, MAX_SUGGESTIONS);
+  const { movies } = useCatalog();
+  const suggestions = searchMovies(movies, query).slice(0, MAX_SUGGESTIONS);
   const showList = open && query.trim().length > 0;
 
   useEffect(() => {

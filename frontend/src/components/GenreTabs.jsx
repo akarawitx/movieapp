@@ -1,16 +1,13 @@
+import { useCatalog } from '../context/CatalogContext'
 import styles from '../css/components/GenreTabs.module.css'
 
-const GENRES = [
-  { id: 'all', label: 'ทั้งหมด' },
-  { id: 'action', label: 'แอ็คชั่น' },
-  { id: 'scifi', label: 'Sci-Fi' },
-  { id: 'drama', label: 'ดราม่า' },
-  { id: 'horror', label: 'สยองขวัญ' },
-  { id: 'comedy', label: 'ตลก' },
-  { id: 'romance', label: 'โรแมนติก' },
-]
-
+// แสดงเฉพาะแนวที่มีหนังเผยแพร่อยู่
 export default function GenreTabs({ active, onChange }) {
+  const { genres, movies } = useCatalog()
+  const GENRES = [
+    { id: 'all', label: 'ทั้งหมด' },
+    ...genres.filter((g) => movies.some((m) => m.genre === g.id)),
+  ]
   return (
     <div className={styles.tabs}>
       {GENRES.map(g => (

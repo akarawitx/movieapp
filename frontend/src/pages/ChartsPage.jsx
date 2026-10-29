@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MOVIES } from "../data/movies";
-import { MOVIE_DETAILS } from "../data/movieDetails";
 import { useProfile } from "../context/ProfileContext";
+import { useCatalog } from "../context/CatalogContext";
 import useWatchlistToggle from "../hooks/useWatchlistToggle";
 import Poster from "../components/Poster";
 import Icon from "../components/Icon";
@@ -23,22 +22,22 @@ const CHARTS = [
   },
 ];
 
-// กรองตาม genreLabel (ข้อความที่ผู้ใช้เห็นบนการ์ด) — บางเรื่องมี genre id ซ้ำกันแต่ป้ายต่างกัน
-const GENRES = [
-  { id: "all", label: "ทุกแนว" },
-  ...[...new Set(MOVIES.map((m) => m.genreLabel))].map((label) => ({ id: label, label })),
-];
-const YEARS = ["all", ...[...new Set(MOVIES.map((m) => m.year))].sort((a, b) => b - a)];
-
 export default function ChartsPage({ user, onToast }) {
   const [chartId, setChartId] = useState("top");
   const [genre, setGenre] = useState("all");
   const [year, setYear] = useState("all");
   const { getMyReview } = useProfile();
   const watchlist = useWatchlistToggle(user, onToast);
+  const { movies: MOVIES } = useCatalog();
+  // กรองตาม genreLabel (ข้อความที่ผู้ใช้เห็นบนการ์ด)
+  const GENRES = [
+    { id: "all", label: "ทุกแนว" },
+    ...[...new Set(MOVIES.map((m) => m.genreLabel))].map((label) => ({ id: label, label })),
+  ];
+  const YEARS = ["all", ...[...new Set(MOVIES.map((m) => m.year))].sort((a, b) => b - a)];
 
   const chart = CHARTS.find((c) => c.id === chartId);
-  const maxReviews = Math.max(...MOVIES.map((m) => m.reviews));
+  const maxReviews = Math.max(1, ...MOVIES.map((m) => m.reviews));
 
   const ranked = MOVIES.filter(
     (m) => (genre === "all" || m.genreLabel === genre) && (year === "all" || m.year === year)
@@ -124,7 +123,7 @@ export default function ChartsPage({ user, onToast }) {
               const rank = i + 1;
               const mine = getMyReview(m.id);
               const inList = watchlist.inList(m);
-              const details = MOVIE_DETAILS[m.id] ?? {};
+              const details = m;
               return (
                 <li key={m.id} className={`${styles.row} ${rank <= 3 ? styles[`top${rank}`] : ""}`}>
                   <span className={styles.rank} aria-label={`อันดับ ${rank}`}>

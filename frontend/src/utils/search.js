@@ -1,6 +1,3 @@
-import { MOVIES } from "../data/movies";
-import { getMovieReviews } from "../data/movieDetails";
-
 export const normalize = (s) => String(s ?? "").toLowerCase().trim();
 
 // ให้คะแนนความตรงของหนังแต่ละเรื่อง (0 = ไม่ตรงเลย)
@@ -28,29 +25,29 @@ export function matchReason(movie, query) {
   return null;
 }
 
-export function searchMovies(query) {
+// movies มาจาก useCatalog() (เฉพาะเรื่องที่เผยแพร่)
+export function searchMovies(movies, query) {
   const q = normalize(query);
   if (!q) return [];
-  return MOVIES.map((movie) => ({ movie, rank: relevance(movie, q) }))
+  return movies.map((movie) => ({ movie, rank: relevance(movie, q) }))
     .filter((x) => x.rank > 0)
     .sort((a, b) => b.rank - a.rank || b.movie.score - a.movie.score)
     .map((x) => x.movie);
 }
 
-export function searchReviews(query) {
+// reviews คือ [{ movie, review }] จาก useCommunityReviews()
+export function searchReviews(reviews, query) {
   const q = normalize(query);
   if (!q) return [];
-  return MOVIES.flatMap((movie) =>
-    getMovieReviews(movie)
-      .filter(
-        (r) =>
-          normalize(movie.title).includes(q) ||
-          normalize(r.title).includes(q) ||
-          (!r.spoiler && normalize(r.body).includes(q)) ||
-          normalize(r.name).includes(q)
-      )
-      .map((review) => ({ movie, review }))
-  ).sort((a, b) => b.review.likes - a.review.likes);
+  return reviews
+    .filter(
+      ({ movie, review: r }) =>
+        normalize(movie.title).includes(q) ||
+        normalize(r.title).includes(q) ||
+        (!r.spoiler && normalize(r.body).includes(q)) ||
+        normalize(r.name).includes(q)
+    )
+    .sort((a, b) => b.review.likes - a.review.likes);
 }
 
 // แยกข้อความเป็นส่วน ๆ เพื่อไฮไลต์คำที่ค้น

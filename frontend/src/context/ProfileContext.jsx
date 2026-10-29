@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { createMockProfile, MOCK_ACTIVITY } from '../data/profile'
+import { SEED_ACTIVITIES, SEED_PROFILES } from '../data/accounts'
+import { useAccounts } from './AccountsContext'
 import { load, save } from '../utils/storage'
 
 const ProfileContext = createContext(null)
@@ -14,6 +16,7 @@ const moveKey = (obj, from, to, value) => {
 
 // โปรไฟล์และกิจกรรม (watchlist, รีวิว ฯลฯ) เก็บแยกตาม username และบันทึกลง localStorage
 export function ProfileProvider({ user, onUserChange, children }) {
+  const { accounts, renameAccount, removeAccount, updateAccount } = useAccounts()
   const [profiles, setProfiles] = useState(() => load('profiles', {}))
   const [activities, setActivities] = useState(() => load('activities', {}))
 
@@ -25,22 +28,34 @@ export function ProfileProvider({ user, onUserChange, children }) {
     save('activities', activities)
   }, [activities])
 
-  const profile = user ? profiles[user] ?? createMockProfile(user) : null
+  // ผู้ใช้ที่ยังไม่เคยบันทึกโปรไฟล์ → ใช้ข้อมูลจำลอง (อีเมลจากทะเบียนบัญชี)
+  const resolveProfile = (username) =>
+    profiles[username] ?? {
+      ...createMockProfile(username),
+      ...SEED_PROFILES[username],
+      ...(accounts[username]?.email && { email: accounts[username].email }),
+    }
   // ข้อมูลที่บันทึกจากเวอร์ชันเก่าอาจไม่มีบาง field → เติมจากค่าตั้งต้น
-  const activity = { ...MOCK_ACTIVITY, ...(user ? activities[user] : null) }
+  const resolveActivity = (username, saved = activities) => ({
+    ...(SEED_ACTIVITIES[username] ?? MOCK_ACTIVITY),
+    ...saved[username],
+  })
 
-  const setActivity = (update) =>
-    setActivities((prev) => ({
-      ...prev,
-      [user]: update({ ...MOCK_ACTIVITY, ...prev[user] }),
-    }))
+  const profile = user ? resolveProfile(user) : null
+  const activity = resolveActivity(user)
+
+  const setActivityOf = (username, update) =>
+    setActivities((prev) => ({ ...prev, [username]: update(resolveActivity(username, prev)) }))
+  const setActivity = (update) => setActivityOf(user, update)
 
   const updateProfile = (patch) => {
     if (!user) return
     const next = { ...profile, ...patch }
     setProfiles((prev) => moveKey(prev, user, next.username, next))
+    if (next.email !== profile.email) updateAccount(user, { email: next.email })
     if (next.username !== user) {
       setActivities((prev) => moveKey(prev, user, next.username, prev[user]))
+      renameAccount(user, next.username)
       onUserChange(next.username)
     }
   }
@@ -51,8 +66,32 @@ export function ProfileProvider({ user, onUserChange, children }) {
   const deleteAccount = () => {
     setProfiles((prev) => moveKey(prev, user))
     setActivities((prev) => moveKey(prev, user))
+    removeAccount(user)
     onUserChange(null)
   }
+
+  // ── สำหรับผู้ดูแล: อ่าน/แก้ข้อมูลของผู้ใช้คนอื่น ──
+  const getUserData = (username) => ({
+    profile: resolveProfile(username),
+    activity: resolveActivity(username),
+  })
+
+  const adminUpdateProfile = (username, patch) => {
+    setProfiles((prev) => ({ ...prev, [username]: { ...resolveProfile(username), ...patch } }))
+    if (patch.email) updateAccount(username, { email: patch.email })
+  }
+
+  const adminDeleteUserData = (username) => {
+    setProfiles((prev) => moveKey(prev, username))
+    setActivities((prev) => moveKey(prev, username))
+  }
+
+  const adminDeleteUserReview = (username, movieId) =>
+    setActivityOf(username, (a) => ({
+      ...a,
+      reviews: a.reviews.filter((r) => r.movieId !== movieId),
+      ratings: a.ratings.filter((r) => r.movieId !== movieId),
+    }))
 
   // ── Watchlist ──
   const isInWatchlist = (movieId) => activity.watchlist.includes(movieId)
@@ -150,6 +189,10 @@ export function ProfileProvider({ user, onUserChange, children }) {
         getMyReview,
         saveReview,
         deleteReview,
+        getUserData,
+        adminUpdateProfile,
+        adminDeleteUserData,
+        adminDeleteUserReview,
       }}
     >
       {children}

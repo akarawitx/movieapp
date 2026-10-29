@@ -17,6 +17,7 @@ export default function MobileMenu({
   navItems,
   pathname,
   profile,
+  isAdmin = false,
   onLogin,
   onRegister,
   onLogout,
@@ -98,6 +99,12 @@ export default function MobileMenu({
         {profile ? (
           <>
             <div className={styles.section}>
+              {isAdmin && (
+                <button className={`${styles.link} ${styles.admin}`} onClick={() => go("/admin")}>
+                  <Icon name="shield" size={18} />
+                  แผงผู้ดูแลระบบ
+                </button>
+              )}
               {ACCOUNT_LINKS.map((l) => (
                 <button
                   key={l.path}

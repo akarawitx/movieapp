@@ -1,4 +1,5 @@
 // ข้อมูลเสริมสำหรับหน้ารายละเอียดหนัง (ข้อมูลจำลอง ยังไม่ต่อ API)
+// MOVIE_DETAILS ใช้ seed ครั้งแรกเท่านั้น — CatalogContext รวม field เหล่านี้เข้าไปในตัวหนังแต่ละเรื่อง
 
 export const MOVIE_DETAILS = {
   dune2: { releaseDate: '2024-03-01', rated: 'PG-13', language: 'อังกฤษ', country: 'สหรัฐอเมริกา', studio: 'Legendary Pictures' },
@@ -13,8 +14,7 @@ export const MOVIE_DETAILS = {
 }
 
 // เรียงหนังตามวันเข้าฉาย ใหม่สุดก่อน (ใช้กับโซน/ตัวเรียง "เร็วๆ นี้" จนกว่าจะมีหนังที่ยังไม่เข้าฉายในข้อมูล)
-export const byReleaseDesc = (a, b) =>
-  (MOVIE_DETAILS[b.id]?.releaseDate ?? '').localeCompare(MOVIE_DETAILS[a.id]?.releaseDate ?? '')
+export const byReleaseDesc = (a, b) => (b.releaseDate ?? '').localeCompare(a.releaseDate ?? '')
 
 // นักรีวิวจำลอง (มีหน้าโปรไฟล์สาธารณะที่ /u/:username)
 export const REVIEWERS = [
@@ -57,6 +57,8 @@ function seeded(str) {
 const clampScore = (n) => Math.min(10, Math.max(1, Math.round(n)))
 
 export function getMovieReviews(movie) {
+  // หนังที่เพิ่งเพิ่มโดยผู้ดูแล (ยังไม่มีรีวิว) ไม่ต้องสร้างรีวิวจำลอง
+  if (!movie.reviews) return []
   const rand = seeded(movie.id)
   const count = 4 + Math.floor(rand() * 3)
   const base = new Date('2026-10-01')
@@ -80,15 +82,6 @@ export function getMovieReviews(movie) {
       date: date.toISOString().slice(0, 10),
     }
   })
-}
-
-// รีวิวของทุกเรื่องรวมกัน (คำนวณครั้งเดียวเพราะข้อมูลคงที่)
-let allReviews
-export function getAllReviews(movies) {
-  allReviews ??= movies.flatMap((movie) =>
-    getMovieReviews(movie).map((review) => ({ movie, review }))
-  )
-  return allReviews
 }
 
 // สัดส่วนคะแนน 5 ช่วง (9–10, 7–8, 5–6, 3–4, 1–2) อิงจากคะแนนเฉลี่ยของหนัง

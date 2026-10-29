@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useProfile } from "../../context/ProfileContext";
+import { useAccounts } from "../../context/AccountsContext";
 import Icon from "../Icon";
 import PasswordStrength from "../PasswordStrength";
 import styles from "../../css/components/settings/Settings.module.css";
@@ -85,8 +86,8 @@ const EMPTY_PW = { current: "", next: "", confirm: "" };
 function PasswordForm({ onToast }) {
   const [form, setForm] = useState(EMPTY_PW);
   const [errors, setErrors] = useState({});
+  const { changePassword } = useAccounts();
   const set = (key) => (e) => setForm({ ...form, [key]: e.target.value });
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -97,7 +98,12 @@ function PasswordForm({ onToast }) {
     if (form.confirm !== form.next) errs.confirm = "รหัสผ่านไม่ตรงกัน";
     setErrors(errs);
     if (Object.keys(errs).length) return;
-    // TODO: เชื่อมต่อ API เปลี่ยนรหัสผ่าน
+    // TODO: เชื่อมต่อ API เปลี่ยนรหัสผ่าน (ตอนนี้ตรวจกับทะเบียนบัญชีจำลอง)
+    const { error } = changePassword(form.current, form.next);
+    if (error) {
+      setErrors({ current: error });
+      return;
+    }
     setForm(EMPTY_PW);
     onToast?.("เปลี่ยนรหัสผ่านแล้ว");
   };

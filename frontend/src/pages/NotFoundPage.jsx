@@ -1,12 +1,12 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { MOVIES } from "../data/movies";
+import { useCatalog } from "../context/CatalogContext";
 import styles from "../css/pages/NotFoundPage.module.css";
-
-const SUGGESTIONS = [...MOVIES].sort((a, b) => b.score - a.score).slice(0, 4);
 
 export default function NotFoundPage() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { movies } = useCatalog();
+  const SUGGESTIONS = [...movies].sort((a, b) => b.score - a.score).slice(0, 4);
 
   return (
     <div className={styles.page}>

@@ -1,21 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { MOVIES } from "../data/movies";
+import { useCatalog } from "../context/CatalogContext";
 import MovieCard from "../components/MovieCard";
 import MovieDetailModal from "../components/MovieDetailModal";
 import { useProfile } from "../context/ProfileContext";
 import { byReleaseDesc } from "../data/movieDetails";
 import styles from "../css/pages/MovieBrowsePage.module.css";
-
-const GENRES = [
-  { id: "all", label: "ทั้งหมด" },
-  { id: "action", label: "แอ็คชั่น" },
-  { id: "scifi", label: "Sci-Fi" },
-  { id: "drama", label: "ดราม่า" },
-  { id: "horror", label: "สยองขวัญ" },
-  { id: "comedy", label: "ตลก" },
-  { id: "romance", label: "โรแมนติก" },
-];
 
 const SORTS = [
   { id: "score", label: "คะแนนสูงสุด" },
@@ -103,6 +93,8 @@ export default function MovieBrowsePage({ user, onToast }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const yearDropdownRef = useRef(null);
+  const { movies, genres } = useCatalog();
+  const GENRES = [{ id: "all", label: "ทั้งหมด" }, ...genres];
 
   const initGenre = searchParams.get("genre");
   const [genre, setGenre] = useState(
@@ -136,7 +128,7 @@ export default function MovieBrowsePage({ user, onToast }) {
   const { addToWatchlist } = useProfile();
 
   const filtered = useMemo(() => {
-    let result = [...MOVIES];
+    let result = [...movies];
 
     if (search.trim())
       result = result.filter(
@@ -160,7 +152,7 @@ export default function MovieBrowsePage({ user, onToast }) {
     if (sort === "upcoming") result.sort(byReleaseDesc);
 
     return result;
-  }, [genre, year, customYear, showCustom, scoreRange, sort, search]);
+  }, [movies, genre, year, customYear, showCustom, scoreRange, sort, search]);
 
   const handleWatchlist = (movie) => {
     if (!user) {

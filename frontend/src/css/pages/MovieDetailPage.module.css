@@ -4,6 +4,24 @@
   background: var(--dark);
 }
 
+.adminNotice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(245, 197, 24, 0.12);
+  border-bottom: 1px solid rgba(245, 197, 24, 0.3);
+  color: var(--gold);
+  font-size: 13.5px;
+}
+
+.adminNotice a {
+  color: #fff;
+  font-weight: 600;
+}
+
 /* ═════════ Hero ═════════ */
 .hero {
   position: relative;

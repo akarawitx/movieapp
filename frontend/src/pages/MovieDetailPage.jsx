@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { MOVIES } from "../data/movies";
-import { MOVIE_DETAILS } from "../data/movieDetails";
 import { useProfile } from "../context/ProfileContext";
+import { useCatalog } from "../context/CatalogContext";
+import { useAccounts } from "../context/AccountsContext";
 import useLoginPrompt from "../hooks/useLoginPrompt";
 import MovieCard from "../components/MovieCard";
 import ReviewSection from "../components/movie/ReviewSection";
@@ -28,7 +28,7 @@ const trailerUrl = (movie) =>
 const scrollToId = (id) =>
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-function getSimilar(movie) {
+function getSimilar(movie, MOVIES) {
   const sameGenre = MOVIES.filter((m) => m.id !== movie.id && m.genre === movie.genre);
   const others = MOVIES.filter((m) => m.id !== movie.id && m.genre !== movie.genre).sort(
     (a, b) => b.score - a.score
@@ -65,6 +65,8 @@ export default function MovieDetailPage({ user, onToast }) {
   const { isInWatchlist, toggleWatchlist, addToWatchlist, getMyReview } = useProfile();
   const active = useActiveSection(SECTION_IDS);
   const { hash } = useLocation();
+  const { movies, getMovie } = useCatalog();
+  const { isAdmin } = useAccounts();
 
   // ลิงก์แบบ /movies/:id#reviews → เลื่อนไปยัง section (รอให้ App เลื่อนขึ้นบนสุดเสร็จก่อน)
   useEffect(() => {
@@ -73,20 +75,22 @@ export default function MovieDetailPage({ user, onToast }) {
     return () => clearTimeout(t);
   }, [id, hash]);
 
-  const movie = MOVIES.find((m) => m.id === id);
+  // ผู้ดูแลเปิดดูหนังที่ซ่อนอยู่ได้ (มีแถบแจ้งด้านบน)
+  const movie = isAdmin ? getMovie(id) : movies.find((m) => m.id === id);
   if (!movie) return <NotFoundPage />;
 
-  const details = MOVIE_DETAILS[movie.id] ?? {};
+  const details = movie;
   const inWatchlist = user && isInWatchlist(movie.id);
   const myReview = user ? getMyReview(movie.id) : null;
-  const similar = getSimilar(movie);
+  const similar = getSimilar(movie, movies);
   const people = [
     { name: movie.director, role: "ผู้กำกับ" },
-    ...movie.cast.split(",").map((name, i) => ({
-      name: name.trim(),
-      role: i === 0 ? "นักแสดงนำ" : "นักแสดง",
-    })),
-  ];
+    ...movie.cast
+      .split(",")
+      .map((name) => name.trim())
+      .filter(Boolean)
+      .map((name, i) => ({ name, role: i === 0 ? "นักแสดงนำ" : "นักแสดง" })),
+  ].filter((p) => p.name);
 
   const handleWatchlist = () => {
     if (!user) return promptLogin("เข้าสู่ระบบเพื่อเพิ่มหนังในรายการอยากดู");
@@ -138,6 +142,13 @@ export default function MovieDetailPage({ user, onToast }) {
 
   return (
     <div className={styles.page}>
+      {movie.status !== "published" && (
+        <div className={styles.adminNotice}>
+          <Icon name="eyeOff" size={16} />
+          หนังเรื่องนี้ถูกซ่อนจากหน้าเว็บ — เห็นได้เฉพาะผู้ดูแลระบบ
+          <Link to={`/admin/movies/${movie.id}/edit`}>แก้ไข</Link>
+        </div>
+      )}
       {/* ═════════ Hero ═════════ */}
       <section className={styles.hero}>
         <div className={styles.backdrop}>

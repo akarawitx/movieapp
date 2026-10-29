@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProfile } from "../../context/ProfileContext";
 import useLoginPrompt from "../../hooks/useLoginPrompt";
-import { getMovieReviews, getRatingDistribution } from "../../data/movieDetails";
+import { getRatingDistribution } from "../../data/movieDetails";
+import useCommunityReviews from "../../hooks/useCommunityReviews";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
 import styles from "../../css/components/movie/ReviewSection.module.css";
@@ -235,12 +236,13 @@ export default function ReviewSection({ movie, user, onToast }) {
   const [liked, setLiked] = useState(() => new Set());
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const { getReviews } = useCommunityReviews();
 
   const myReview = user ? getMyReview(movie.id) : null;
   const total = movie.reviews + (myReview ? 1 : 0);
 
   const reviews = useMemo(() => {
-    const list = getMovieReviews(movie);
+    const list = getReviews(movie);
     const by = {
       recent: (a, b) => b.date.localeCompare(a.date),
       likes: (a, b) => b.likes - a.likes,
@@ -248,7 +250,7 @@ export default function ReviewSection({ movie, user, onToast }) {
       low: (a, b) => a.score - b.score,
     }[sort];
     return [...list].sort(by);
-  }, [movie, sort]);
+  }, [movie, sort, getReviews]);
 
   const toggleLike = (id) => {
     if (!user) return promptLogin("เข้าสู่ระบบเพื่อกดถูกใจรีวิว");

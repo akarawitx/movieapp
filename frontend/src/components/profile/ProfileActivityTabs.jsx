@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { MOVIES } from "../../data/movies";
+import { useCatalog } from "../../context/CatalogContext";
 import Icon from "../Icon";
 import styles from "../../css/components/profile/ProfileActivityTabs.module.css";
 
-const findMovie = (id) => MOVIES.find((m) => m.id === id);
+// allMovies = แสดงหนังที่ถูกซ่อนด้วย (ใช้ในหน้าผู้ดูแล)
+function useFindMovie(includeHidden) {
+  const { movies, allMovies } = useCatalog();
+  const list = includeHidden ? allMovies : movies;
+  return (id) => list.find((m) => m.id === id);
+}
 
 function EmptyState({ text }) {
   const navigate = useNavigate();
@@ -19,7 +24,8 @@ function EmptyState({ text }) {
   );
 }
 
-function ReviewsTab({ reviews, readOnly }) {
+function ReviewsTab({ reviews, readOnly, includeHidden }) {
+  const findMovie = useFindMovie(includeHidden);
   if (!reviews.length)
     return <EmptyState text={readOnly ? "ยังไม่มีรีวิว" : "คุณยังไม่ได้เขียนรีวิว"} />;
   return (
@@ -75,8 +81,14 @@ function PosterGrid({ items, emptyText }) {
 }
 
 // readOnly = โปรไฟล์สาธารณะ, hideWatchlist = เจ้าของปิดการแสดงรายการอยากดู
-export default function ProfileActivityTabs({ activity, readOnly = false, hideWatchlist = false }) {
+export default function ProfileActivityTabs({
+  activity,
+  readOnly = false,
+  hideWatchlist = false,
+  includeHidden = false,
+}) {
   const [tab, setTab] = useState("reviews");
+  const findMovie = useFindMovie(includeHidden);
 
   const watchlist = activity.watchlist
     .map((id) => ({ movie: findMovie(id) }))
@@ -109,7 +121,9 @@ export default function ProfileActivityTabs({ activity, readOnly = false, hideWa
       </div>
 
       <div className={styles.panel} role="tabpanel">
-        {tab === "reviews" && <ReviewsTab reviews={activity.reviews} readOnly={readOnly} />}
+        {tab === "reviews" && (
+          <ReviewsTab reviews={activity.reviews} readOnly={readOnly} includeHidden={includeHidden} />
+        )}
         {tab === "watchlist" && (
           <>
             <PosterGrid items={watchlist} emptyText="ยังไม่มีหนังในรายการอยากดู" />

@@ -1,0 +1,293 @@
+/* ═════════ โครงหน้าผู้ดูแล: sidebar + topbar + เนื้อหา ═════════ */
+.shell {
+  min-height: 100vh;
+  background: var(--dark);
+  display: grid;
+  grid-template-columns: 248px minmax(0, 1fr);
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--darker);
+  border-right: 1px solid var(--border);
+  padding: 18px 14px;
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 10px 18px;
+  color: #fff;
+  text-decoration: none;
+}
+
+.brandText {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.brandBadge {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #000;
+  background: var(--gold);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+.group {
+  margin-top: 14px;
+}
+
+.groupLabel {
+  display: block;
+  padding: 0 12px 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  color: var(--text-muted);
+  font-size: 14px;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+}
+
+.navLink:hover {
+  background: var(--dark3);
+  color: #fff;
+}
+
+.navActive,
+.navActive:hover {
+  background: rgba(245, 197, 24, 0.12);
+  color: var(--gold);
+}
+
+.navCount {
+  margin-left: auto;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text-dim);
+  background: var(--dark4);
+  border-radius: 999px;
+  padding: 1px 8px;
+}
+
+.navActive .navCount {
+  color: var(--gold);
+  background: rgba(245, 197, 24, 0.15);
+}
+
+.sideBottom {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Topbar ── */
+.main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 28px;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.menuBtn {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 6px;
+  margin-left: -6px;
+}
+
+.crumb {
+  font-size: 13.5px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.crumb strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.topRight {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.me {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 13.5px;
+}
+
+.meText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.meText span {
+  font-size: 11.5px;
+  color: var(--gold);
+}
+
+.logoutBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-muted);
+  padding: 7px 11px;
+  font-family: "Prompt", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  color: #ff6b6b;
+  border-color: rgba(229, 9, 20, 0.4);
+}
+
+.content {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 28px 64px;
+}
+
+.backdrop {
+  display: none;
+}
+
+/* ── Toast ของหน้าผู้ดูแล (มีปุ่มเลิกทำได้) ── */
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: min(420px, calc(100vw - 32px));
+  padding: 12px 14px 12px 18px;
+  background: var(--dark4);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+  animation: toastIn 0.25s ease-out;
+}
+
+.toastError {
+  border-color: rgba(229, 9, 20, 0.45);
+}
+
+.toastBtn {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-family: "Prompt", sans-serif;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (max-width: 960px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .sidebar {
+    position: fixed;
+    left: 0;
+    z-index: 120;
+    width: 264px;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebarOpen {
+    transform: none;
+    box-shadow: 20px 0 50px rgba(0, 0, 0, 0.6);
+  }
+  .backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 110;
+    background: rgba(0, 0, 0, 0.6);
+  }
+  .menuBtn {
+    display: flex;
+  }
+  .topbar {
+    padding: 0 16px;
+  }
+  .content {
+    padding: 20px 16px 56px;
+  }
+}
+
+@media (max-width: 560px) {
+  .meText {
+    display: none;
+  }
+  .logoutBtn span {
+    display: none;
+  }
+  .toast {
+    right: 16px;
+    bottom: 16px;
+  }
+}

@@ -1,7 +1,20 @@
+// ข้อมูลตั้งต้นของแคตตาล็อก (ใช้ seed ครั้งแรกใน CatalogContext — หน้าเว็บอ่านผ่าน useCatalog() เท่านั้น)
+
+export const GENRES = [
+  { id: 'action', label: 'แอ็คชั่น' },
+  { id: 'scifi', label: 'Sci-Fi' },
+  { id: 'drama', label: 'ดราม่า' },
+  { id: 'horror', label: 'สยองขวัญ' },
+  { id: 'comedy', label: 'ตลก' },
+  { id: 'romance', label: 'โรแมนติก' },
+  { id: 'animation', label: 'แอนิเมชั่น' },
+  { id: 'fantasy', label: 'แฟนตาซี' },
+]
+
 export const MOVIES = [
   {
     id: 'dune2', title: 'Dune: Part Two',
-    year: 2024, duration: '2h 46m', genre: 'scifi', genreLabel: 'Sci-Fi',
+    year: 2024, duration: '2h 46m', genre: 'scifi',
     score: 8.7, reviews: 2840,
     poster: 'https://www.themoviedb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nxl1X.jpg',
     backdrop: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1280&q=80',
@@ -10,7 +23,7 @@ export const MOVIES = [
   },
   {
     id: 'oppenheimer', title: 'Oppenheimer',
-    year: 2023, duration: '3h 0m', genre: 'drama', genreLabel: 'ดราม่า',
+    year: 2023, duration: '3h 0m', genre: 'drama',
     score: 8.9, reviews: 3210,
     poster: 'https://www.themoviedb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
     backdrop: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1280&q=80',
@@ -19,7 +32,7 @@ export const MOVIES = [
   },
   {
     id: 'godzilla', title: 'Godzilla x Kong',
-    year: 2024, duration: '1h 55m', genre: 'action', genreLabel: 'แอ็คชั่น',
+    year: 2024, duration: '1h 55m', genre: 'action',
     score: 7.2, reviews: 1560,
     poster: 'https://upload.wikimedia.org/wikipedia/en/b/be/Godzilla_x_kong_the_new_empire_poster.jpg',
     backdrop: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=1280&q=80',
@@ -28,7 +41,7 @@ export const MOVIES = [
   },
   {
     id: 'kungfu4', title: 'Kung Fu Panda 4',
-    year: 2024, duration: '1h 34m', genre: 'comedy', genreLabel: 'ตลก',
+    year: 2024, duration: '1h 34m', genre: 'comedy',
     score: 7.1, reviews: 980,
     poster: 'https://www.themoviedb.org/t/p/w500/kDp1vUBnMpe8ak4rjgl3cLELqjU.jpg',
     backdrop: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=1280&q=80',
@@ -37,7 +50,7 @@ export const MOVIES = [
   },
   {
     id: 'alien', title: 'Alien: Romulus',
-    year: 2024, duration: '1h 59m', genre: 'horror', genreLabel: 'สยองขวัญ',
+    year: 2024, duration: '1h 59m', genre: 'horror',
     score: 7.4, reviews: 2100,
     poster: 'https://www.themoviedb.org/t/p/w500/b33nnKl1GSFbao4l3fZDDqsMx0F.jpg',
     backdrop: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=1280&q=80',
@@ -46,7 +59,7 @@ export const MOVIES = [
   },
   {
     id: 'civil', title: 'Civil War',
-    year: 2024, duration: '1h 49m', genre: 'action', genreLabel: 'แอ็คชั่น',
+    year: 2024, duration: '1h 49m', genre: 'action',
     score: 7.5, reviews: 1890,
     poster: 'https://www.themoviedb.org/t/p/w500/sh7Rg8Er3tFcN9BpKIPOMvALgZd.jpg',
     backdrop: 'https://images.unsplash.com/photo-1529107386315-e1a2ed48a620?w=1280&q=80',
@@ -55,7 +68,7 @@ export const MOVIES = [
   },
   {
     id: 'insideo', title: 'Inside Out 2',
-    year: 2024, duration: '1h 40m', genre: 'drama', genreLabel: 'แอนิเมชั่น',
+    year: 2024, duration: '1h 40m', genre: 'animation',
     score: 7.9, reviews: 3400,
     poster: 'https://www.themoviedb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg',
     backdrop: 'https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?w=1280&q=80',
@@ -64,7 +77,7 @@ export const MOVIES = [
   },
   {
     id: 'deadpool', title: 'Deadpool & Wolverine',
-    year: 2024, duration: '2h 7m', genre: 'action', genreLabel: 'แอ็คชั่น',
+    year: 2024, duration: '2h 7m', genre: 'action',
     score: 7.8, reviews: 4200,
     poster: 'https://www.themoviedb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg',
     backdrop: 'https://images.unsplash.com/photo-1612036782180-6f0b6cd846fe?w=1280&q=80',
@@ -73,7 +86,7 @@ export const MOVIES = [
   },
   {
     id: 'ghostbuster', title: 'Ghostbusters: Frozen Empire',
-    year: 2024, duration: '1h 55m', genre: 'comedy', genreLabel: 'แฟนตาซี',
+    year: 2024, duration: '1h 55m', genre: 'fantasy',
     score: 6.8, reviews: 1230,
     poster: 'https://upload.wikimedia.org/wikipedia/en/3/31/Ghostbusters_%282024%29_poster.jpg',
     backdrop: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1280&q=80',

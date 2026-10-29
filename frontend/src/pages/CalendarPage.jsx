@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MOVIES } from "../data/movies";
-import { MOVIE_DETAILS } from "../data/movieDetails";
+import { useCatalog } from "../context/CatalogContext";
 import useWatchlistToggle from "../hooks/useWatchlistToggle";
 import Poster from "../components/Poster";
 import Icon from "../components/Icon";
@@ -15,15 +14,11 @@ const parseDate = (iso) => {
   return new Date(y, m - 1, d);
 };
 
-const ENTRIES = MOVIES.filter((m) => MOVIE_DETAILS[m.id]?.releaseDate)
-  .map((movie) => ({
-    movie,
-    details: MOVIE_DETAILS[movie.id],
-    date: parseDate(MOVIE_DETAILS[movie.id].releaseDate),
-  }))
-  .sort((a, b) => b.date - a.date);
-
-const YEARS = [...new Set(ENTRIES.map((e) => e.date.getFullYear()))];
+const toEntries = (movies) =>
+  movies
+    .filter((m) => m.releaseDate)
+    .map((movie) => ({ movie, details: movie, date: parseDate(movie.releaseDate) }))
+    .sort((a, b) => b.date - a.date);
 
 const monthKey = (d) => `${d.getFullYear()}-${d.getMonth()}`;
 const monthLabel = (d) => d.toLocaleDateString("th-TH", { month: "long", year: "numeric" });
@@ -92,6 +87,9 @@ function ReleaseItem({ entry, watchlist }) {
 export default function CalendarPage({ user, onToast }) {
   const [year, setYear] = useState("all");
   const watchlist = useWatchlistToggle(user, onToast);
+  const { movies } = useCatalog();
+  const ENTRIES = toEntries(movies);
+  const YEARS = [...new Set(ENTRIES.map((e) => e.date.getFullYear()))];
 
   const upcoming = ENTRIES.filter((e) => daysUntil(e.date) > 0).reverse();
   const released = ENTRIES.filter(
